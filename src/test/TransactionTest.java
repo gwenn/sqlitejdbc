@@ -204,7 +204,7 @@ public class TransactionTest
         stat2.executeUpdate("insert into t values (3);"); // can't be done
     }
 
-    @Test(expected= SQLException.class)
+    @Test
     public void cantUpdateWhileReading() throws SQLException {
         stat1.executeUpdate("create table t (c1);");
         stat1.executeUpdate("insert into t values (1);");
@@ -212,7 +212,7 @@ public class TransactionTest
         ResultSet rs = conn1.createStatement().executeQuery("select * from t;");
         assertTrue(rs.next());
 
-        stat1.executeUpdate("insert into t values (3);"); // can't be done
+        stat1.executeUpdate("insert into t values (3);");
     }
 
     @Test(expected= SQLException.class)
