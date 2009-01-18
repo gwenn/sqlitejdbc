@@ -164,22 +164,43 @@ final class PrepStmt extends Stmt
         batch(pos, null);
     }
     public void setObject(int pos, Object value) throws SQLException {
-        if (value == null)
-            batch(pos, null);
-        else if (value instanceof java.util.Date)
-            batch(pos, new Long(((java.util.Date)value).getTime()));
-        else if (value instanceof Date)
-            batch(pos, new Long(((Date)value).getTime()));
-        else if (value instanceof Time)
-            batch(pos, new Long(((Time)value).getTime()));
-        else if (value instanceof Timestamp)
-            batch(pos, new Long(((Timestamp)value).getTime()));
-        else if (value instanceof Long) batch(pos, value);
-        else if (value instanceof Integer) batch(pos, value);
-        else if (value instanceof Float) batch(pos, value);
-        else if (value instanceof Double) batch(pos, value);
-        else
-            batch(pos, value.toString());
+        if (value == null) {
+          setNull(pos, Types.NULL);
+        } else if (value instanceof String) {
+          setString(pos, (String)value);
+        } else if (value instanceof BigDecimal) {
+          setBigDecimal(pos, (BigDecimal)value);
+        } else if (value instanceof Short) {
+          setShort(pos, ((Short)value).shortValue());
+        } else if (value instanceof Integer) {
+          setInt(pos, ((Integer)value).intValue());
+        } else if (value instanceof Long) {
+          setLong(pos, ((Long)value).longValue());
+        } else if (value instanceof Float) {
+          setFloat(pos, ((Float)value).floatValue());
+        } else if (value instanceof Double) {
+          setDouble(pos, ((Double)value).doubleValue());
+        } else if (value instanceof byte[]) {
+          setBytes(pos, (byte[])value);
+        } else if (value instanceof Date) {
+          setDate(pos, (Date)value);
+        } else if (value instanceof Time) {
+          setTime(pos, (Time)value);
+        } else if (value instanceof Timestamp) {
+          setTimestamp(pos, (Timestamp)value);
+        } else if (value instanceof Boolean) {
+          setBoolean(pos, ((Boolean)value).booleanValue());
+        } else if (value instanceof Byte) {
+          setByte(pos, ((Byte)value).byteValue());
+        } else if (value instanceof Blob) {
+          setBlob(pos, (Blob)value);
+        } else if (value instanceof Clob) {
+          setClob(pos, (Clob)value);
+        } else if (value instanceof Array) {
+          setArray(pos, (Array)value);
+        } else {
+          throw new SQLException("Can't infer type for " + value.getClass().getName() + '.');
+        }
     }
     public void setObject(int p, Object v, int t) throws SQLException {
         setObject(p, v); }
@@ -191,18 +212,30 @@ final class PrepStmt extends Stmt
         batch(pos, value);
     }
     public void setDate(int pos, Date x) throws SQLException {
-        setObject(pos, x); }
+        if (db.isJulianDayMode())
+            batch(pos, x == null ? null : new Double(toJulianDay(x.getTime())));
+        else
+            batch(pos, x == null ? null : new Long(x.getTime()));
+    }
     public void setDate(int pos, Date x, Calendar cal) throws SQLException {
-        setObject(pos, x); }
+        setDate(pos, x); }
     public void setTime(int pos, Time x) throws SQLException {
-        setObject(pos, x); }
+        if (db.isJulianDayMode())
+            batch(pos, x == null ? null : new Double(toJulianDay(x.getTime())));
+        else
+            batch(pos, x == null ? null : new Long(x.getTime()));
+    }
     public void setTime(int pos, Time x, Calendar cal) throws SQLException {
-        setObject(pos, x); }
+        setTime(pos, x); }
     public void setTimestamp(int pos, Timestamp x) throws SQLException {
-        setObject(pos, x); }
+        if (db.isJulianDayMode())
+            batch(pos, x == null ? null : new Double(toJulianDay(x.getTime())));
+        else
+            batch(pos, x == null ? null : new Long(x.getTime()));
+    }
     public void setTimestamp(int pos, Timestamp x, Calendar cal)
             throws SQLException {
-        setObject(pos, x);
+        setTimestamp(pos, x);
     }
 
     public void setBigDecimal(int pos, BigDecimal value) throws SQLException {
@@ -282,5 +315,12 @@ final class PrepStmt extends Stmt
 
     private SQLException unused() {
         return new SQLException("not supported by PreparedStatment");
+    }
+
+    // 1970-01-01 00:00:00 is JD 2440587.5
+    static double toJulianDay(long ms) {
+        double adj = (ms < 0) ? 0 : 0.5;
+        double d = (ms + adj) / 86400000.0 + 2440587.5;
+        return d;
     }
 }

@@ -197,17 +197,28 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     public Date getDate(int col) throws SQLException {
         if (db.column_type(stmt.pointer, markCol(col)) == SQLITE_NULL)
             return null;
-        return new Date(db.column_long(stmt.pointer, markCol(col)));
+        if (db.isJulianDayMode()) {
+            final double jd = db.column_double(stmt.pointer, markCol(col));
+            return new Date(fromJulianDay(jd));
+        } else {
+            return new Date(db.column_long(stmt.pointer, markCol(col)));
+        }
     }
     public Date getDate(int col, Calendar cal) throws SQLException {
         if (db.column_type(stmt.pointer, markCol(col)) == SQLITE_NULL)
             return null;
         if (cal == null) return getDate(col);
-        cal.setTimeInMillis(db.column_long(stmt.pointer, markCol(col)));
-        return new Date(cal.getTime().getTime());
+        if (db.isJulianDayMode()) {
+            final double jd = db.column_double(stmt.pointer, markCol(col));
+            cal.setTimeInMillis(fromJulianDay(jd));
+            return new Date(cal.getTime().getTime());
+        } else {
+            cal.setTimeInMillis(db.column_long(stmt.pointer, markCol(col)));
+            return new Date(cal.getTime().getTime());
+        }
     }
     public Date getDate(String col) throws SQLException {
-        return getDate(findColumn(col), Calendar.getInstance()); }
+        return getDate(findColumn(col)); }
     public Date getDate(String col, Calendar cal) throws SQLException {
         return getDate(findColumn(col), cal); }
 
@@ -250,13 +261,25 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     public Time getTime(int col) throws SQLException {
         if (db.column_type(stmt.pointer, markCol(col)) == SQLITE_NULL)
             return null;
-        return new Time(db.column_long(stmt.pointer, markCol(col))); }
+        if (db.isJulianDayMode()) {
+            final double jd = db.column_double(stmt.pointer, markCol(col));
+            return new Time(fromJulianDay(jd));
+        } else {
+            return new Time(db.column_long(stmt.pointer, markCol(col)));
+        }
+    }
     public Time getTime(int col, Calendar cal) throws SQLException {
         if (cal == null) return getTime(col);
         if (db.column_type(stmt.pointer, markCol(col)) == SQLITE_NULL)
             return null;
-        cal.setTimeInMillis(db.column_long(stmt.pointer, markCol(col)));
-        return new Time(cal.getTime().getTime());
+        if (db.isJulianDayMode()) {
+            final double jd = db.column_double(stmt.pointer, markCol(col));
+            cal.setTimeInMillis(fromJulianDay(jd));
+            return new Time(cal.getTime().getTime());
+        } else {
+            cal.setTimeInMillis(db.column_long(stmt.pointer, markCol(col)));
+            return new Time(cal.getTime().getTime());
+        }
     }
     public Time getTime(String col) throws SQLException {
         return getTime(findColumn(col)); }
@@ -266,13 +289,25 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     public Timestamp getTimestamp(int col) throws SQLException {
         if (db.column_type(stmt.pointer, markCol(col)) == SQLITE_NULL)
             return null;
-        return new Timestamp(db.column_long(stmt.pointer, markCol(col))); }
+        if (db.isJulianDayMode()) {
+            final double jd = db.column_double(stmt.pointer, markCol(col));
+            return new Timestamp(fromJulianDay(jd));
+        } else {
+            return new Timestamp(db.column_long(stmt.pointer, markCol(col)));
+        }
+    }
     public Timestamp getTimestamp(int col, Calendar cal) throws SQLException {
         if (cal == null) return getTimestamp(col);
         if (db.column_type(stmt.pointer, markCol(col)) == SQLITE_NULL)
             return null;
-        cal.setTimeInMillis(db.column_long(stmt.pointer, markCol(col)));
-        return new Timestamp(cal.getTime().getTime());
+        if (db.isJulianDayMode()) {
+            final double jd = db.column_double(stmt.pointer, markCol(col));
+            cal.setTimeInMillis(fromJulianDay(jd));
+            return new Timestamp(cal.getTime().getTime());
+        } else {
+            cal.setTimeInMillis(db.column_long(stmt.pointer, markCol(col)));
+            return new Timestamp(cal.getTime().getTime());
+        }
     }
     public Timestamp getTimestamp(String col) throws SQLException {
         return getTimestamp(findColumn(col)); }
@@ -462,4 +497,11 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     public boolean rowDeleted()  throws SQLException { return false; }
     public boolean rowInserted() throws SQLException { return false; }
     public boolean rowUpdated()  throws SQLException { return false; }
+
+    // 1970-01-01 00:00:00 is JD 2440587.5
+    private static long fromJulianDay(double jd) {
+        jd -= 2440587.5;
+        jd *= 86400000.0;
+        return (long) jd;
+    }
 }

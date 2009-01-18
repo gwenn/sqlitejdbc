@@ -49,6 +49,13 @@ public class JDBC implements Driver
             "Enable SQLite Shared-Cache mode, native driver only.";
         sharedCache.required = false;
 
+        DriverPropertyInfo julianDay = new DriverPropertyInfo(
+            "julian_day", "false");
+        julianDay.choices = new String[] { "true", "false" };
+        julianDay.description =
+            "Store Dates/Times as julian day numbers.";
+        julianDay.required = false;
+
         return new DriverPropertyInfo[] { sharedCache };
     }
 
@@ -60,10 +67,8 @@ public class JDBC implements Driver
         String file = PREFIX.equalsIgnoreCase(url) ?
             ":memory:" : url.substring(PREFIX.length());
 
-        if (info.getProperty("shared_cache") == null)
-            return new Conn(url, file);
-        else
-            return new Conn(url, file,
-                Boolean.parseBoolean(info.getProperty("shared_cache")));
+        boolean sharedCache = Boolean.parseBoolean(info.getProperty("shared_cache"));
+        boolean julianDayMode = Boolean.parseBoolean(info.getProperty("julian_day"));
+        return new Conn(url, file, sharedCache, julianDayMode);
     }
 }

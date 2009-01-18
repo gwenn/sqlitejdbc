@@ -1,6 +1,7 @@
 package test;
 
 import java.sql.*;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -29,6 +30,14 @@ public class PrepStmtTest
 
     @Before public void connect() throws Exception {
         conn = DriverManager.getConnection("jdbc:sqlite:");
+        stat = conn.createStatement();
+    }
+    
+    private void connectWithJulianDayModeActivated() throws SQLException {
+        close();
+        final Properties info = new Properties();
+        info.setProperty("julian_day", "true");
+        conn = DriverManager.getConnection("jdbc:sqlite:", info);
         stat = conn.createStatement();
     }
 
@@ -447,6 +456,71 @@ public class PrepStmtTest
         assertTrue(rs.next());
         assertEquals(rs.getLong(1), d1.getTime());
         assertTrue(rs.getDate(1).equals(d1));
+    }
+
+    @Test public void date() throws SQLException {
+        connectWithJulianDayModeActivated();
+        Date d1 = new Date(System.currentTimeMillis());
+
+        stat.execute("create table t (c1);");
+        PreparedStatement prep = conn.prepareStatement(
+                "insert into t values(?);");
+        prep.setDate(1, d1);
+        prep.executeUpdate();
+
+        ResultSet rs = stat.executeQuery("select c1 from t;");
+        assertTrue(rs.next());
+        assertEquals(d1.getYear(), rs.getDate(1).getYear());
+        assertEquals(d1.getMonth(), rs.getDate(1).getMonth());
+        assertEquals(d1.getDay(), rs.getDate(1).getDay());
+        rs.close();
+    }
+
+    @Test public void time() throws SQLException {
+        connectWithJulianDayModeActivated();
+        Time d1 = new Time(System.currentTimeMillis());
+
+        stat.execute("create table t (c1);");
+        PreparedStatement prep = conn.prepareStatement(
+                "insert into t values (?);");
+        prep.setTime(1, d1);
+        prep.executeUpdate();
+
+        ResultSet rs = stat.executeQuery("select c1 from t;");
+        assertTrue(rs.next());
+        assertEquals(d1.getHours(), rs.getTime(1).getHours());
+        assertEquals(d1.getMinutes(), rs.getTime(1).getMinutes());
+        assertEquals(d1.getSeconds(), rs.getTime(1).getSeconds());
+    }
+
+    @Test public void timestamp() throws SQLException {
+        connectWithJulianDayModeActivated();
+        long now = System.currentTimeMillis();
+        Timestamp d1 = new Timestamp(now);
+        Date d2 = new Date(now);
+        Time d3 = new Time(now);
+
+        stat.execute("create table t (c1);");
+        PreparedStatement prep = conn.prepareStatement(
+                "insert into t values (?);");
+        prep.setTimestamp(1, d1);
+        prep.executeUpdate();
+
+        ResultSet rs = stat.executeQuery("select c1 from t;");
+        assertTrue(rs.next());
+        assertEquals(d1, rs.getTimestamp(1));
+
+        rs = stat.executeQuery("select date(c1, 'localtime') from t;");
+        assertTrue(rs.next());
+        assertEquals(d2.toString(), rs.getString(1));
+
+        rs = stat.executeQuery("select time(c1, 'localtime') from t;");
+        assertTrue(rs.next());
+        assertEquals(d3.toString(), rs.getString(1));
+
+        rs = stat.executeQuery("select strftime('%Y-%m-%d %H:%M:%f', c1, 'localtime') from t;");
+        assertTrue(rs.next());
+        // assertEquals(d1.toString(), rs.getString(1)); // ms are not occurate...
     }
 
     @Test public void changeSchema() throws SQLException {

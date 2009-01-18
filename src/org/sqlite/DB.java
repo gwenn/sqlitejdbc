@@ -43,6 +43,16 @@ abstract class DB implements Codes
     /** Tracer for statements to avoid unfinalized statements on db close. */
     private Map stmts = new Hashtable();
 
+    /** <code>true</code> to store Dates/Times as julian day numbers */
+    private boolean julianDayMode;
+
+    final void setJulianDayMode(boolean julianDayMode) {
+        this.julianDayMode = julianDayMode;
+    }
+    final boolean isJulianDayMode() {
+        return julianDayMode;
+    }
+
     // WRAPPER FUNCTIONS ////////////////////////////////////////////
 
     abstract void interrupt() throws SQLException;

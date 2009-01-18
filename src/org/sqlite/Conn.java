@@ -29,10 +29,11 @@ class Conn implements Connection
     private boolean autoCommit = true;
     private int timeout = 0;
 
-    public Conn(String url, String filename, boolean sharedCache)
+    public Conn(String url, String filename, boolean sharedCache, boolean julianDayMode)
             throws SQLException {
         this(url, filename);
         db.shared_cache(sharedCache);
+        db.setJulianDayMode(julianDayMode);
     }
     public Conn(String url, String filename) throws SQLException {
         boolean ro = false;
