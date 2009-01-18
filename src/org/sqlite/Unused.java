@@ -50,21 +50,11 @@ abstract class Unused
 
     public void setArray(int i, Array x)
         throws SQLException { throw unused(); }
-    public void setAsciiStream(int parameterIndex, InputStream x, int length)
-        throws SQLException { throw unused(); }
-    public void setBigDecimal(int parameterIndex, BigDecimal x)
-        throws SQLException { throw unused(); }
-    public void setBinaryStream(int parameterIndex, InputStream x, int length)
-        throws SQLException { throw unused(); }
     public void setBlob(int i, Blob x)
-        throws SQLException { throw unused(); }
-    public void setCharacterStream(int pos, Reader reader, int length)
         throws SQLException { throw unused(); }
     public void setClob(int i, Clob x)
         throws SQLException { throw unused(); }
     public void setRef(int i, Ref x)
-        throws SQLException { throw unused(); }
-    public void setUnicodeStream(int pos, InputStream x, int length)
         throws SQLException { throw unused(); }
     public void setURL(int pos, URL x)
         throws SQLException { throw unused(); }
@@ -76,29 +66,9 @@ abstract class Unused
         throws SQLException { throw unused(); }
     public Array getArray(String col)
         throws SQLException { throw unused(); }
-    public InputStream getAsciiStream(int col)
-        throws SQLException { throw unused(); }
-    public InputStream getAsciiStream(String col)
-        throws SQLException { throw unused(); }
-    public BigDecimal getBigDecimal(int col)
-        throws SQLException { throw unused(); }
-    public BigDecimal getBigDecimal(int col, int s)
-        throws SQLException { throw unused(); }
-    public BigDecimal getBigDecimal(String col)
-        throws SQLException { throw unused(); }
-    public BigDecimal getBigDecimal(String col, int s)
-        throws SQLException { throw unused(); }
-    public InputStream getBinaryStream(int col)
-        throws SQLException { throw unused(); }
-    public InputStream getBinaryStream(String col)
-        throws SQLException { throw unused(); }
     public Blob getBlob(int col)
         throws SQLException { throw unused(); }
     public Blob getBlob(String col)
-        throws SQLException { throw unused(); }
-    public Reader getCharacterStream(int col)
-        throws SQLException { throw unused(); }
-    public Reader getCharacterStream(String col)
         throws SQLException { throw unused(); }
     public Clob getClob(int col)
         throws SQLException { throw unused(); }
@@ -113,10 +83,6 @@ abstract class Unused
     public Ref getRef(String col)
         throws SQLException { throw unused(); }
 
-    public InputStream getUnicodeStream(int col)
-        throws SQLException { throw unused(); }
-    public InputStream getUnicodeStream(String col)
-        throws SQLException { throw unused(); }
     public URL getURL(int col)
         throws SQLException { throw unused(); }
     public URL getURL(String col)

@@ -15,12 +15,13 @@
  */
 package org.sqlite;
 
-import java.sql.*;
-
+import java.io.ByteArrayInputStream;
+import java.io.CharArrayReader;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URL;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -277,6 +278,97 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
         return getTimestamp(findColumn(col)); }
     public Timestamp getTimestamp(String c, Calendar ca) throws SQLException {
         return getTimestamp(findColumn(c), ca); }
+
+    public BigDecimal getBigDecimal(int col) throws SQLException {
+        final String stringValue = getString(col);
+        if (stringValue == null) {
+            return null;
+        } else {
+            try {
+                return new BigDecimal(stringValue);
+            } catch (NumberFormatException e) {
+                throw new SQLException("Bad value for type BigDecimal : " + stringValue);
+            }
+        }
+    }
+    public BigDecimal getBigDecimal(int col, int s) throws SQLException {
+        final BigDecimal value = getBigDecimal(col);
+        if (null == value) {
+            return value;
+        } else {
+            if (s == -1) {
+                return value;
+            } else {
+                try {
+                    return value.setScale(s);
+                } catch (ArithmeticException e) {
+                    throw new SQLException(e.getMessage());
+                }
+            }
+        }
+    }
+    public BigDecimal getBigDecimal(String col) throws SQLException {
+        return getBigDecimal(findColumn(col));
+    }
+    public BigDecimal getBigDecimal(String col, int s) throws SQLException {
+        return getBigDecimal(findColumn(col), s);
+    }
+
+    public InputStream getBinaryStream(int col) throws SQLException {
+        final byte[] bytes = getBytes(col);
+        if (bytes == null) {
+            return null;
+        } else {
+            return new ByteArrayInputStream(bytes);
+        }
+    }
+    public InputStream getBinaryStream(String col) throws SQLException {
+        return getBinaryStream(findColumn(col));
+    }
+
+    public Reader getCharacterStream(int col) throws SQLException {
+        final String string = getString(col);
+        if (string == null) {
+            return null;
+        } else {
+            return new CharArrayReader(string.toCharArray());
+        }
+    }
+    public Reader getCharacterStream(String col) throws SQLException {
+        return getCharacterStream(findColumn(col));
+    }
+
+    public InputStream getAsciiStream(int col) throws SQLException {
+        final String string = getString(col);
+        if (string == null) {
+            return null;
+        } else {
+            try {
+                return new ByteArrayInputStream(string.getBytes("ASCII"));
+            } catch (UnsupportedEncodingException e) {
+                throw new SQLException(e.getMessage());
+            }
+        }
+    }
+    public InputStream getAsciiStream(String col) throws SQLException {
+        return getAsciiStream(findColumn(col));
+    }
+
+    public InputStream getUnicodeStream(int col) throws SQLException {
+        final String string = getString(col);
+        if (string == null) {
+            return null;
+        } else {
+            try {
+                return new ByteArrayInputStream(string.getBytes("UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                throw new SQLException(e.getMessage());
+            }
+        }
+    }
+    public InputStream getUnicodeStream(String col) throws SQLException {
+        return getUnicodeStream(findColumn(col));
+    }
 
     public Object getObject(int col) throws SQLException {
         switch (db.column_type(stmt.pointer, checkCol(col))) {

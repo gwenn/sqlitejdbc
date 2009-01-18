@@ -16,7 +16,6 @@
 package org.sqlite;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 class Stmt extends Unused implements Statement, Codes
 {

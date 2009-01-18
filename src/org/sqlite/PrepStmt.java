@@ -16,12 +16,17 @@
 
 package org.sqlite;
 
-import java.io.Reader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.sql.*;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.sql.*;
 import java.util.Calendar;
 
 final class PrepStmt extends Stmt
@@ -198,6 +203,66 @@ final class PrepStmt extends Stmt
     public void setTimestamp(int pos, Timestamp x, Calendar cal)
             throws SQLException {
         setObject(pos, x);
+    }
+
+    public void setBigDecimal(int pos, BigDecimal value) throws SQLException {
+        batch(pos, value == null ? null : value.toString());
+    }
+
+    public void setBinaryStream(int pos, InputStream x, int length) throws SQLException {
+        if (x == null) {
+            batch(pos, null);
+        } else {
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+            try {
+                copy(x, output);
+            } catch (IOException e) {
+                throw new SQLException(e.getMessage());
+            }
+            batch(pos, output.toByteArray());
+        }
+    }
+    public void setCharacterStream(int pos, Reader reader, int length) throws SQLException {
+        if (reader == null) {
+            batch(pos, null);
+        } else {
+            final StringWriter sw = new StringWriter();
+            try {
+                copy(reader, sw);
+            } catch (IOException e) {
+                throw new SQLException(e.getMessage());
+            }
+            batch(pos, sw.toString());
+        }
+    }
+    public void setAsciiStream(int pos, InputStream x, int length) throws SQLException {
+        try {
+            setCharacterStream(pos, x == null ? null : new InputStreamReader(x, "ASCII"), length);
+        } catch (UnsupportedEncodingException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
+    public void setUnicodeStream(int pos, InputStream x, int length) throws SQLException {
+        try {
+            setCharacterStream(pos, x == null ? null : new InputStreamReader(x, "UTF-8"), length);
+        } catch (UnsupportedEncodingException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
+
+    private static void copy(InputStream input, OutputStream output) throws IOException {
+        byte[] buffer = new byte[1024 * 4];
+        int n;
+        while (-1 != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+        }
+    }
+    private static void copy(Reader input, Writer output) throws IOException {
+        char[] buffer = new char[1024 * 4];
+        int n;
+        while (-1 != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+        }
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {

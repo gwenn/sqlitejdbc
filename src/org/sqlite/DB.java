@@ -15,8 +15,6 @@
  */
 package org.sqlite;
 
-import java.lang.ref.*;
-import java.io.File;
 import java.sql.*;
 import java.util.*;
 
