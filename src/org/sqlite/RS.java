@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,6 +37,7 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     boolean open = false   ;  // true means have results and can iterate them
     int maxRows;              // max. number of rows as set by a Statement
     String[] cols = null;     // if null, the RS is closed()
+    Map columnNameToIndex = null;
     String[] colsMeta = null; // same as cols, but used by Meta interface
     boolean[][] meta = null;
 
@@ -86,6 +88,7 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
 
     public void close() throws SQLException {
         cols = null;
+        columnNameToIndex = null;
         colsMeta = null;
         meta = null;
         open = false;
@@ -102,21 +105,31 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     // returns col in [1,x] form
     public int findColumn(String col) throws SQLException {
         checkOpen();
-        int c = -1;
+        Integer index = findColumnIndexInCache(col);
+        if (null != index) {
+          return index.intValue();
+        }
         for (int i=0; i < cols.length; i++) {
-            if (col.equalsIgnoreCase(cols[i])
-                || (cols[i].toUpperCase().endsWith(col.toUpperCase()) &&
-                    cols[i].charAt(cols[i].length() - col.length()) == '.')) {
-                if (c == -1)
-                    c = i;
-                else
-                    throw new SQLException("ambiguous column: '"+col+"'");
+            if (col.equalsIgnoreCase(cols[i])) {
+              addColumnIndexInCache(col, i+1);
+              return i+1;
             }
         }
-        if (c == -1)
-            throw new SQLException("no such column: '"+col+"'");
-        else
-            return c + 1;
+        throw new SQLException("no such column: '"+col+"'");
+    }
+
+    private Integer findColumnIndexInCache(String col) {
+        if (null == columnNameToIndex) {
+            return null;
+        } else {
+            return (Integer)columnNameToIndex.get(col);
+        }
+    }
+    private void addColumnIndexInCache(String col, int index) {
+        if (null == columnNameToIndex) {
+            columnNameToIndex = new HashMap(cols.length);
+        }
+        columnNameToIndex.put(col, new Integer(index));
     }
 
     public boolean next() throws SQLException {
