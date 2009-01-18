@@ -1,0 +1,5 @@
+Fork of the JDBC Driver for SQLite provided by David Crawshaw (http://www.zentus.com/sqlitejdbc).
+
+ - Adds support to BigDecimal, BinaryStream, CharacterStream, AsciiStream.
+ - Stores Dates and Times as julian day number.
+ - Introduces a cache to make ResultSet#findColumn(String) faster.
