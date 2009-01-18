@@ -66,23 +66,10 @@ class Conn implements Connection
 
         readOnly = ro;
 
-        // TODO: library variable to explicitly control load type
-        // attempt to use the Native library first
-        try {
-            Class nativedb = Class.forName("org.sqlite.NativeDB");
-            if (((Boolean)nativedb.getDeclaredMethod("load", null)
-                        .invoke(null, null)).booleanValue())
-                db = (DB)nativedb.newInstance();
-        } catch (Exception e) { } // fall through to nested library
-
-        // load nested library
-        if (db == null) {
-            try {
-                db = (DB)Class.forName("org.sqlite.NestedDB").newInstance();
-            } catch (Exception e) {
-                throw new SQLException("no SQLite library found");
-            }
-        }
+        if (NativeDB.load())
+            db = new NativeDB();
+        else
+            throw new SQLException("no SQLite library found");
 
         this.url = url;
         db.open(this, filename);
@@ -234,11 +221,7 @@ class Conn implements Connection
     /** Used to supply DatabaseMetaData.getDriverVersion(). */
     String getDriverVersion() {
         if (db != null) {
-            String dbname = db.getClass().getName();
-            if (dbname.indexOf("NestedDB") >= 0)
-                return "pure";
-            if (dbname.indexOf("NativeDB") >= 0)
-                return "native";
+            return "native";
         }
         return "unloaded";
     }
