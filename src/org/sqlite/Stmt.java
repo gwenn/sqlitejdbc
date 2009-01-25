@@ -187,7 +187,7 @@ class Stmt extends Unused implements Statement, Codes
 
     public void cancel() throws SQLException { rs.checkOpen(); db.interrupt(); }
     public int getQueryTimeout() throws SQLException {
-        return conn.getTimeout(); }
+        return conn.getTimeout() / 1000; }
     public void setQueryTimeout(int seconds) throws SQLException {
         if (seconds < 0) throw new SQLException("query timeout must be >= 0");
         conn.setTimeout(1000 * seconds);

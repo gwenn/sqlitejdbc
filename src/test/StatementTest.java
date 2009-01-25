@@ -320,4 +320,10 @@ public class StatementTest
         assertTrue(rs.next());
         rs.getInt("noSuchColName");
     }
+
+    @Test public void queryTimeout() throws SQLException {
+        final int timeout = 30;      
+        stat.setQueryTimeout(timeout);
+        assertEquals(timeout, stat.getQueryTimeout());
+    }
 }
