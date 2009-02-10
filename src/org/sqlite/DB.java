@@ -41,7 +41,7 @@ abstract class DB implements Codes
     long commit = 0;
 
     /** Tracer for statements to avoid unfinalized statements on db close. */
-    private Map stmts = new Hashtable();
+    private Map<Long, Stmt> stmts = new Hashtable<Long,Stmt>();
 
     /** <code>true</code> to store Dates/Times as julian day numbers */
     private boolean julianDayMode;
@@ -88,11 +88,11 @@ abstract class DB implements Codes
     final synchronized void close() throws SQLException {
         // finalize any remaining statements before closing db
         synchronized (stmts) {
-            Iterator i = stmts.entrySet().iterator();
+            Iterator<Map.Entry<Long,Stmt>> i = stmts.entrySet().iterator();
             while (i.hasNext()) {
-                Map.Entry entry = (Map.Entry)i.next();
-                Stmt stmt = (Stmt)entry.getValue();
-                finalize(((Long)entry.getKey()).longValue());
+                Map.Entry<Long,Stmt> entry = i.next();
+                Stmt stmt = entry.getValue();
+                finalize(entry.getKey());
                 if (stmt != null) {
                     stmt.pointer = 0;
                 }

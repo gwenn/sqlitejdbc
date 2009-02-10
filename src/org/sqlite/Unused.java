@@ -56,6 +56,8 @@ abstract class Unused
         throws SQLException { throw unused(); }
     public void setRef(int i, Ref x)
         throws SQLException { throw unused(); }
+    public void setUnicodeStream(int pos, InputStream x, int length)
+        throws SQLException { throw unused(); }
     public void setURL(int pos, URL x)
         throws SQLException { throw unused(); }
 
@@ -66,6 +68,10 @@ abstract class Unused
         throws SQLException { throw unused(); }
     public Array getArray(String col)
         throws SQLException { throw unused(); }
+    public BigDecimal getBigDecimal(int col, int s)
+        throws SQLException { throw unused(); }
+    public BigDecimal getBigDecimal(String col, int s)
+        throws SQLException { throw unused(); }
     public Blob getBlob(int col)
         throws SQLException { throw unused(); }
     public Blob getBlob(String col)
@@ -74,15 +80,19 @@ abstract class Unused
         throws SQLException { throw unused(); }
     public Clob getClob(String col)
         throws SQLException { throw unused(); }
-    public Object getObject(int col, Map map)
+    public Object getObject(int col, Map<String, Class<?>> map)
         throws SQLException { throw unused(); }
-    public Object getObject(String col, Map map)
+    public Object getObject(String col, Map<String, Class<?>> map)
         throws SQLException { throw unused(); }
     public Ref getRef(int i)
         throws SQLException { throw unused(); }
     public Ref getRef(String col)
         throws SQLException { throw unused(); }
 
+    public InputStream getUnicodeStream(int col)
+        throws SQLException { throw unused(); }
+    public InputStream getUnicodeStream(String col)
+        throws SQLException { throw unused(); }
     public URL getURL(int col)
         throws SQLException { throw unused(); }
     public URL getURL(String col)

@@ -15,7 +15,12 @@
  */
 package org.sqlite;
 
-import java.sql.*;
+import java.sql.BatchUpdateException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
 
 class Stmt extends Unused implements Statement, Codes
 {

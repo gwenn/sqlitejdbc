@@ -380,11 +380,11 @@ class MetaData implements DatabaseMetaData
 
             colType = colType == null ? "TEXT" : colType.toUpperCase();
             int colJavaType = -1;
-            if (colType == "INT" || colType == "INTEGER")
+            if ("INT".equals(colType) || "INTEGER".equals(colType))
                 colJavaType = Types.INTEGER;
-            else if (colType == "TEXT")
+            else if ("TEXT".equals(colType))
                 colJavaType = Types.VARCHAR;
-            else if (colType == "FLOAT")
+            else if ("FLOAT".equals(colType))
                 colJavaType = Types.FLOAT;
             else
                 colJavaType = Types.VARCHAR;
@@ -709,10 +709,4 @@ class MetaData implements DatabaseMetaData
         }
         return buf.toString();
     }
-
-    public Struct createStruct(String t, Object[] attr) throws SQLException {
-        throw new SQLException("Not yet implemented by SQLite JDBC driver"); }
-    public ResultSet getFunctionColumns(String a, String b, String c,
-                String d) throws SQLException {
-        throw new SQLException("Not yet implemented by SQLite JDBC driver"); }
 }

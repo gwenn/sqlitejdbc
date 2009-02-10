@@ -16,7 +16,6 @@
 
 package org.sqlite;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,8 +24,21 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.ParameterMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Calendar;
 
 final class PrepStmt extends Stmt
@@ -146,16 +158,16 @@ final class PrepStmt extends Stmt
         batch(pos, value);
     }
     public void setDouble(int pos, double value) throws SQLException {
-        batch(pos, new Double(value));
+        batch(pos, value);
     }
     public void setFloat(int pos, float value) throws SQLException {
         setDouble(pos, value);
     }
     public void setInt(int pos, int value) throws SQLException {
-        batch(pos, new Integer(value));
+        batch(pos, value);
     }
     public void setLong(int pos, long value) throws SQLException {
-        batch(pos, new Long(value));
+        batch(pos, value);
     }
     public void setNull(int pos, int u1) throws SQLException {
         setNull(pos, u1, null);
@@ -213,25 +225,25 @@ final class PrepStmt extends Stmt
     }
     public void setDate(int pos, Date x) throws SQLException {
         if (db.isJulianDayMode())
-            batch(pos, x == null ? null : new Double(toJulianDay(x.getTime())));
+            batch(pos, x == null ? null : toJulianDay(x.getTime()));
         else
-            batch(pos, x == null ? null : new Long(x.getTime()));
+            batch(pos, x == null ? null : x.getTime());
     }
     public void setDate(int pos, Date x, Calendar cal) throws SQLException {
         setDate(pos, x); }
     public void setTime(int pos, Time x) throws SQLException {
         if (db.isJulianDayMode())
-            batch(pos, x == null ? null : new Double(toJulianDay(x.getTime())));
+            batch(pos, x == null ? null : toJulianDay(x.getTime()));
         else
-            batch(pos, x == null ? null : new Long(x.getTime()));
+            batch(pos, x == null ? null : x.getTime());
     }
     public void setTime(int pos, Time x, Calendar cal) throws SQLException {
         setTime(pos, x); }
     public void setTimestamp(int pos, Timestamp x) throws SQLException {
         if (db.isJulianDayMode())
-            batch(pos, x == null ? null : new Double(toJulianDay(x.getTime())));
+            batch(pos, x == null ? null : toJulianDay(x.getTime()));
         else
-            batch(pos, x == null ? null : new Long(x.getTime()));
+            batch(pos, x == null ? null : x.getTime());
     }
     public void setTimestamp(int pos, Timestamp x, Calendar cal)
             throws SQLException {
@@ -271,13 +283,6 @@ final class PrepStmt extends Stmt
     public void setAsciiStream(int pos, InputStream x, int length) throws SQLException {
         try {
             setCharacterStream(pos, x == null ? null : new InputStreamReader(x, "ASCII"), length);
-        } catch (UnsupportedEncodingException e) {
-            throw new SQLException(e.getMessage());
-        }
-    }
-    public void setUnicodeStream(int pos, InputStream x, int length) throws SQLException {
-        try {
-            setCharacterStream(pos, x == null ? null : new InputStreamReader(x, "UTF-8"), length);
         } catch (UnsupportedEncodingException e) {
             throw new SQLException(e.getMessage());
         }

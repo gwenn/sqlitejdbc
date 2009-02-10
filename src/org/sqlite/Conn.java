@@ -15,10 +15,17 @@
  */
 package org.sqlite;
 
-import java.sql.*;
-import java.util.*;
 import java.io.File;
-import java.lang.ref.WeakReference;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.util.Map;
 
 class Conn implements Connection
 {
@@ -127,9 +134,9 @@ class Conn implements Connection
             "SQLite supports only TRANSACTION_SERIALIZABLE");
     }
 
-    public Map getTypeMap() throws SQLException
+    public Map<String,Class<?>> getTypeMap() throws SQLException
         { throw new SQLException("not yet implemented");}
-    public void setTypeMap(Map map) throws SQLException
+    public void setTypeMap(Map<String, Class<?>> map) throws SQLException
         { throw new SQLException("not yet implemented");}
 
     public boolean isReadOnly() throws SQLException { return readOnly; }
@@ -238,7 +245,4 @@ class Conn implements Connection
         throw new SQLException("unsupported by SQLite: savepoints"); }
     public void rollback(Savepoint savepoint) throws SQLException {
         throw new SQLException("unsupported by SQLite: savepoints"); }
-
-    public Struct createStruct(String t, Object[] attr) throws SQLException {
-        throw new SQLException("unsupported by SQLite"); }
 }

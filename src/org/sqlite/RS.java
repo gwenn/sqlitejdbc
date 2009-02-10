@@ -21,7 +21,15 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,11 +45,10 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     boolean open = false   ;  // true means have results and can iterate them
     int maxRows;              // max. number of rows as set by a Statement
     String[] cols = null;     // if null, the RS is closed()
-    Map columnNameToIndex = null;
+    Map<String, Integer> columnNameToIndex = null;
     String[] colsMeta = null; // same as cols, but used by Meta interface
     boolean[][] meta = null;
 
-    private int limitRows; // 0 means no limit, must check against maxRows
     private int row = 1;   // number of current row, starts at 1
     private int lastCol;   // last column accessed, for wasNull(). -1 if none
 
@@ -92,13 +99,12 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
         colsMeta = null;
         meta = null;
         open = false;
-        limitRows = 0;
         row = 1;
         lastCol = -1;
 
         if (stmt == null)
             return;
-        if (stmt != null && stmt.pointer != 0)
+        if (stmt.pointer != 0)
             db.reset(stmt.pointer);
     }
 
@@ -107,7 +113,7 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
         checkOpen();
         Integer index = findColumnIndexInCache(col);
         if (null != index) {
-          return index.intValue();
+          return index;
         }
         for (int i=0; i < cols.length; i++) {
             if (col.equalsIgnoreCase(cols[i])) {
@@ -122,14 +128,14 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
         if (null == columnNameToIndex) {
             return null;
         } else {
-            return (Integer)columnNameToIndex.get(col);
+            return columnNameToIndex.get(col);
         }
     }
     private void addColumnIndexInCache(String col, int index) {
         if (null == columnNameToIndex) {
-            columnNameToIndex = new HashMap(cols.length);
+            columnNameToIndex = new HashMap<String, Integer>(cols.length);
         }
-        columnNameToIndex.put(col, new Integer(index));
+        columnNameToIndex.put(col, index);
     }
 
     public boolean next() throws SQLException {
@@ -141,7 +147,6 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
 
         // check if we are row limited by the statement or the ResultSet
         if (maxRows != 0 && row > maxRows) return false;
-        if (limitRows != 0 && row >= limitRows) return false;
 
         // do the real work
         switch (db.step(stmt.pointer)) {
@@ -158,12 +163,11 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
 
     public int getType() throws SQLException { return TYPE_FORWARD_ONLY; }
 
-    public int getFetchSize() throws SQLException { return limitRows; }
+    public int getFetchSize() throws SQLException { return 1; }
     public void setFetchSize(int rows) throws SQLException {
-        if (0 > rows || (maxRows != 0 && rows > maxRows))
-            throw new SQLException("fetch size " + rows
-                                   + " out of bounds " + maxRows);
-        limitRows = rows; 
+        if (rows != 1) {
+            throw new SQLException("SQLite does not support setting fetch size");
+        }
     }
 
     public int getFetchDirection() throws SQLException {
@@ -193,7 +197,7 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     // DATA ACCESS FUNCTIONS ////////////////////////////////////////
 
     public boolean getBoolean(int col) throws SQLException {
-        return getInt(col) == 0 ? false : true; }
+        return getInt(col) != 0; }
     public boolean getBoolean(String col) throws SQLException {
         return getBoolean(findColumn(col)); }
 
@@ -339,27 +343,8 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
             }
         }
     }
-    public BigDecimal getBigDecimal(int col, int s) throws SQLException {
-        final BigDecimal value = getBigDecimal(col);
-        if (null == value) {
-            return value;
-        } else {
-            if (s == -1) {
-                return value;
-            } else {
-                try {
-                    return value.setScale(s);
-                } catch (ArithmeticException e) {
-                    throw new SQLException(e.getMessage());
-                }
-            }
-        }
-    }
     public BigDecimal getBigDecimal(String col) throws SQLException {
         return getBigDecimal(findColumn(col));
-    }
-    public BigDecimal getBigDecimal(String col, int s) throws SQLException {
-        return getBigDecimal(findColumn(col), s);
     }
 
     public InputStream getBinaryStream(int col) throws SQLException {
@@ -402,32 +387,16 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
         return getAsciiStream(findColumn(col));
     }
 
-    public InputStream getUnicodeStream(int col) throws SQLException {
-        final String string = getString(col);
-        if (string == null) {
-            return null;
-        } else {
-            try {
-                return new ByteArrayInputStream(string.getBytes("UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new SQLException(e.getMessage());
-            }
-        }
-    }
-    public InputStream getUnicodeStream(String col) throws SQLException {
-        return getUnicodeStream(findColumn(col));
-    }
-
     public Object getObject(int col) throws SQLException {
         switch (db.column_type(stmt.pointer, checkCol(col))) {
             case SQLITE_INTEGER:
                 long val = getLong(col);
                 if (val > (long)Integer.MAX_VALUE
                         || val < (long)Integer.MIN_VALUE)
-                    return new Long(val);
+                    return val;
                 else
-                    return new Integer((int)val);
-            case SQLITE_FLOAT:   return new Double(getDouble(col));
+                    return (int) val;
+            case SQLITE_FLOAT:   return getDouble(col);
             case SQLITE_BLOB:    return getBytes(col);
             case SQLITE_NULL:    return null;
             case SQLITE_TEXT:

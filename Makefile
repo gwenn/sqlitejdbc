@@ -51,7 +51,7 @@ build/$(sqlite)-%/sqlite3.o: dl/$(sqlite)-amal.zip
 
 build/org/%.class: src/org/%.java
 	@mkdir -p build
-	$(JAVAC) -source 1.2 -target 1.2 -sourcepath src -d build $<
+	$(JAVAC) -target 1.5 -sourcepath src -d build $<
 
 build/test/%.class: src/test/%.java
 	@mkdir -p build
