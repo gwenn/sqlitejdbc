@@ -34,11 +34,11 @@ public class DBMetaDataTest
         ResultSet rs = meta.getTables(null, null, null, null);
         assertNotNull(rs);
         assertTrue(rs.next());
-        assertEquals(rs.getString("TABLE_NAME"), "TEST"); // 3
-        assertEquals(rs.getString("TABLE_TYPE"), "TABLE"); // 4
+        assertEquals("test", rs.getString("TABLE_NAME")); // 3
+        assertEquals("TABLE", rs.getString("TABLE_TYPE")); // 4
         assertTrue(rs.next());
-        assertEquals(rs.getString("TABLE_NAME"), "TESTVIEW");
-        assertEquals(rs.getString("TABLE_TYPE"), "VIEW");
+        assertEquals("testView", rs.getString("TABLE_NAME"));
+        assertEquals("VIEW", rs.getString("TABLE_TYPE"));
         rs.close();
 
         rs = meta.getTables(null, null, "bob", null);
@@ -55,13 +55,13 @@ public class DBMetaDataTest
 
         rs = meta.getTables(null, null, null, new String[] { "table" });
         assertTrue(rs.next());
-        assertEquals(rs.getString("TABLE_NAME"), "TEST");
+        assertEquals("test", rs.getString("TABLE_NAME"));
         assertFalse(rs.next());
         rs.close();
 
         rs = meta.getTables(null, null, null, new String[] { "view" });
         assertTrue(rs.next());
-        assertEquals(rs.getString("TABLE_NAME"), "TESTVIEW");
+        assertEquals("testView", rs.getString("TABLE_NAME"));
         assertFalse(rs.next());
         rs.close();
     }
@@ -80,15 +80,15 @@ public class DBMetaDataTest
         ResultSet rs = meta.getTypeInfo();
         assertNotNull(rs);
         assertTrue(rs.next());
-        assertEquals(rs.getString("TYPE_NAME"), "BLOB");
+        assertEquals("NULL", rs.getString("TYPE_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("TYPE_NAME"), "INTEGER");
+        assertEquals("INTEGER", rs.getString("TYPE_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("TYPE_NAME"), "NULL");
+        assertEquals("REAL", rs.getString("TYPE_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("TYPE_NAME"), "REAL");
+        assertEquals("TEXT", rs.getString("TYPE_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("TYPE_NAME"), "TEXT");
+        assertEquals("BLOB", rs.getString("TYPE_NAME"));
         assertFalse(rs.next());
     }
 
@@ -323,6 +323,16 @@ public class DBMetaDataTest
         assertEquals(rsmeta.getColumnName(6), "BUFFER_LENGTH");
         assertEquals(rsmeta.getColumnName(7), "DECIMAL_DIGITS");
         assertEquals(rsmeta.getColumnName(8), "PSEUDO_COLUMN");
+        rs = meta.getBestRowIdentifier(null, null, "test", 0, false);
+        assertTrue(rs.next());
+        assertEquals(0, rs.getInt(1));
+        assertEquals("ROWID", rs.getString(2));
+        assertEquals(Types.INTEGER, rs.getInt(3));
+        assertEquals("INTEGER", rs.getString(4));
+        assertEquals(10, rs.getInt(5));
+        assertEquals(0, rs.getInt(6));
+        assertEquals(0, rs.getInt(7));
+        assertEquals(DatabaseMetaData.bestRowPseudo, rs.getInt(8));
     }
 
     @Test public void columnOrderOfgetVersionColumns() throws SQLException {
@@ -413,5 +423,71 @@ public class DBMetaDataTest
             "pure".equals(meta.getDriverVersion()) ||
             "native".equals(meta.getDriverVersion())
         );
+    }
+
+    @Test public void indexInfo() throws SQLException {
+        ResultSet rs = meta.getIndexInfo(null, null, null, false, false);
+        assertFalse(rs.next());
+        ResultSetMetaData rsmeta = rs.getMetaData();
+        assertEquals(13, rsmeta.getColumnCount());
+        assertEquals("TABLE_CAT", rsmeta.getColumnName(1));
+        assertEquals("TABLE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("TABLE_NAME", rsmeta.getColumnName(3));
+        assertEquals("NON_UNIQUE", rsmeta.getColumnName(4));
+        assertEquals("INDEX_QUALIFIER", rsmeta.getColumnName(5));
+        assertEquals("INDEX_NAME", rsmeta.getColumnName(6));
+        assertEquals("TYPE", rsmeta.getColumnName(7));
+        assertEquals("ORDINAL_POSITION", rsmeta.getColumnName(8));
+        assertEquals("COLUMN_NAME", rsmeta.getColumnName(9));
+        assertEquals("ASC_OR_DESC", rsmeta.getColumnName(10));
+        assertEquals("CARDINALITY", rsmeta.getColumnName(11));
+        assertEquals("PAGES", rsmeta.getColumnName(12));
+        assertEquals("FILTER_CONDITION", rsmeta.getColumnName(13));
+
+        rs = meta.getIndexInfo(null, null, "test", true, false);
+        assertFalse(rs.next());
+    }
+
+    @Test public void primaryKeys() throws SQLException {
+        ResultSet rs = meta.getPrimaryKeys(null, null, null);
+        assertFalse(rs.next());
+        ResultSetMetaData rsmeta = rs.getMetaData();
+        assertEquals(6, rsmeta.getColumnCount());
+        assertEquals("TABLE_CAT", rsmeta.getColumnName(1));
+        assertEquals("TABLE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("TABLE_NAME", rsmeta.getColumnName(3));
+        assertEquals("COLUMN_NAME", rsmeta.getColumnName(4));
+        assertEquals("KEY_SEQ", rsmeta.getColumnName(5));
+        assertEquals("PK_NAME", rsmeta.getColumnName(6));
+
+        rs = meta.getPrimaryKeys(null, null, "test");
+        assertTrue(rs.next());
+        assertEquals("test", rs.getString(3));
+        assertEquals("id", rs.getString(4));
+        assertEquals(0, rs.getInt(5));
+        assertNull(rs.getString(6));
+    }
+
+    @Test public void crossReference() throws SQLException {
+        ResultSet rs = meta.getCrossReference(null, null, null, null, null, null);
+        assertFalse(rs.next());
+        ResultSetMetaData rsmeta = rs.getMetaData();
+        assertEquals(14, rsmeta.getColumnCount());
+        assertEquals("PKTABLE_CAT", rsmeta.getColumnName(1));
+        assertEquals("PKTABLE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("PKTABLE_NAME", rsmeta.getColumnName(3));
+        assertEquals("PKCOLUMN_NAME", rsmeta.getColumnName(4));
+        assertEquals("FKTABLE_CAT", rsmeta.getColumnName(5));
+        assertEquals("FKTABLE_SCHEM", rsmeta.getColumnName(6));
+        assertEquals("FKTABLE_NAME", rsmeta.getColumnName(7));
+        assertEquals("FKCOLUMN_NAME", rsmeta.getColumnName(8));
+        assertEquals("KEY_SEQ", rsmeta.getColumnName(9));
+        assertEquals("UPDATE_RULE", rsmeta.getColumnName(10));
+        assertEquals("DELETE_RULE", rsmeta.getColumnName(11));
+        assertEquals("FK_NAME", rsmeta.getColumnName(12));
+        assertEquals("PK_NAME", rsmeta.getColumnName(13));
+        assertEquals("DEFERRABILITY", rsmeta.getColumnName(14));
+        rs = meta.getCrossReference(null, null, null, null, null, "test");
+        assertFalse(rs.next());
     }
 }
