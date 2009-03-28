@@ -27,7 +27,7 @@ test: native $(test_classes)
 native: build/$(sqlitejdbc)-native.jar build/$(target)/$(LIBNAME)
 
 build/$(sqlitejdbc)-native.jar: $(native_classes)
-	cd build && jar cf $(sqlitejdbc)-native.jar $(java_classlist)
+	cd build && $(JAR) cf $(sqlitejdbc)-native.jar $(java_classlist)
 
 build/$(target)/$(LIBNAME): build/$(sqlite)-$(target)/sqlite3.o build/org/sqlite/NativeDB.class
 	@mkdir -p build/$(target)

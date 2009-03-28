@@ -228,7 +228,7 @@ class MetaData implements DatabaseMetaData
         { return h == ResultSet.CLOSE_CURSORS_AT_COMMIT; }
     public boolean supportsResultSetType(int t)
         { return t == ResultSet.TYPE_FORWARD_ONLY; }
-    public boolean supportsSavepoints() { return false; } // TODO SQLite 3.6.8
+    public boolean supportsSavepoints() { return true; }
     public boolean supportsSchemasInDataManipulation() { return false; }
     public boolean supportsSchemasInIndexDefinitions() { return false; }
     public boolean supportsSchemasInPrivilegeDefinitions() { return false; }

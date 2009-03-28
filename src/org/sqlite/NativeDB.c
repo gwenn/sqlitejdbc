@@ -266,17 +266,30 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
     dbclass = (*env)->FindClass(env, "org/sqlite/NativeDB");
     if (!dbclass) return JNI_ERR;
-    dbclass = (*env)->NewGlobalRef(env, dbclass);
+    dbclass = (*env)->NewWeakGlobalRef(env, dbclass);
 
     fclass = (*env)->FindClass(env, "org/sqlite/Function");
     if (!fclass) return JNI_ERR;
-    fclass = (*env)->NewGlobalRef(env, fclass);
+    fclass = (*env)->NewWeakGlobalRef(env, fclass);
 
     aclass = (*env)->FindClass(env, "org/sqlite/Function$Aggregate");
     if (!aclass) return JNI_ERR;
-    aclass = (*env)->NewGlobalRef(env, aclass);
+    aclass = (*env)->NewWeakGlobalRef(env, aclass);
 
     return JNI_VERSION_1_2;
+}
+
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved)
+{
+    JNIEnv* env = 0;
+
+    if (JNI_OK != (*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_2)) {
+        return;
+    }
+    (*env)->DeleteWeakGlobalRef(env, dbclass);
+    (*env)->DeleteWeakGlobalRef(env, fclass);
+    (*env)->DeleteWeakGlobalRef(env, aclass);
+    return;
 }
 
 

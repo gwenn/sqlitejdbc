@@ -36,6 +36,7 @@ class Conn implements Connection
     private boolean autoCommit = true;
     private int timeout = 0;
     private int transactionIsolation = TRANSACTION_SERIALIZABLE;
+    private int savepointId = 0;
 
     public Conn(String url, String filename, boolean sharedCache, boolean julianDayMode)
             throws SQLException {
@@ -244,15 +245,20 @@ class Conn implements Connection
         return "unloaded";
     }
 
-
-    // UNUSED FUNCTIONS /////////////////////////////////////////////
-
     public Savepoint setSavepoint() throws SQLException {
-        throw new SQLException("unsupported by SQLite: savepoints"); }
+        final Spt spt = new Spt(savepointId++);
+        db.exec("SAVEPOINT " + spt.getNameOrId());
+        return spt;
+    }
     public Savepoint setSavepoint(String name) throws SQLException {
-        throw new SQLException("unsupported by SQLite: savepoints"); }
+        final Spt spt = new Spt(name);
+        db.exec("SAVEPOINT " + spt.getNameOrId());
+        return spt;
+    }
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-        throw new SQLException("unsupported by SQLite: savepoints"); }
+        db.exec("RELEASE SAVEPOINT "+ ((Spt)savepoint).getNameOrId());
+    }
     public void rollback(Savepoint savepoint) throws SQLException {
-        throw new SQLException("unsupported by SQLite: savepoints"); }
+        db.exec("ROLLBACK TO SAVEPOINT " + ((Spt)savepoint).getNameOrId());
+    }
 }

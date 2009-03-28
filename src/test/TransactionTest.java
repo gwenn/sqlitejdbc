@@ -215,6 +215,20 @@ public class TransactionTest
         stat1.executeUpdate("insert into t values (3);");
     }
 
+    @Test
+    public void unnamedSavepoint() throws SQLException {
+        Savepoint spt = conn1.setSavepoint();
+        conn1.rollback(spt);
+        conn1.releaseSavepoint(spt);
+    }
+
+    @Test
+    public void namedSavepoint() throws SQLException {
+        Savepoint spt = conn1.setSavepoint("test");
+        conn1.rollback(spt);
+        conn1.releaseSavepoint(spt);
+    }
+
     @Test(expected= SQLException.class)
     public void cantCommit() throws SQLException { conn1.commit(); }
 
