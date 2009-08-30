@@ -34,40 +34,40 @@ public class RSMetaDataTest
     }
 
     @Test public void catalogName() throws SQLException {
-        assertEquals(meta.getCatalogName(1), "People");
+        assertEquals("People", meta.getCatalogName(1));
     }
 
     @Test public void columns() throws SQLException {
-        assertEquals(meta.getColumnCount(), 3);
-        assertEquals(meta.getColumnName(1), "pid");
-        assertEquals(meta.getColumnName(2), "firstname");
-        assertEquals(meta.getColumnName(3), "surname");
-        assertEquals(meta.getColumnType(1), Types.INTEGER);
-        assertEquals(meta.getColumnType(2), Types.VARCHAR);
-        assertEquals(meta.getColumnType(3), Types.VARCHAR);
-        assertEquals(meta.getColumnTypeName(1), "integer");
-        assertEquals(meta.getColumnTypeName(2), "text");
-        assertEquals(meta.getColumnTypeName(3), "text");
+        assertEquals(3, meta.getColumnCount());
+        assertEquals("pid", meta.getColumnName(1));
+        assertEquals("firstname", meta.getColumnName(2));
+        assertEquals("surname", meta.getColumnName(3));
+        assertEquals(Types.INTEGER, meta.getColumnType(1));
+        assertEquals(Types.VARCHAR, meta.getColumnType(2));
+        assertEquals(Types.VARCHAR, meta.getColumnType(3));
+        assertEquals("integer", meta.getColumnTypeName(1));
+        assertEquals("text", meta.getColumnTypeName(2));
+        assertEquals("text", meta.getColumnTypeName(3));
         assertTrue(meta.isAutoIncrement(1));
         assertFalse(meta.isAutoIncrement(2));
         assertFalse(meta.isAutoIncrement(3));
-        assertEquals(meta.isNullable(1), meta.columnNoNulls);
-        assertEquals(meta.isNullable(2), meta.columnNullable);
-        assertEquals(meta.isNullable(3), meta.columnNullable);
+        assertEquals(meta.columnNoNulls, meta.isNullable(1));
+        assertEquals(meta.columnNullable, meta.isNullable(2));
+        assertEquals(meta.columnNullable, meta.isNullable(3));
     }
 
     @Test public void differentRS() throws SQLException {
         meta = stat.executeQuery("select * from people;").getMetaData();
-        assertEquals(meta.getColumnCount(), 4);
-        assertEquals(meta.getColumnName(1), "pid");
-        assertEquals(meta.getColumnName(2), "firstname");
-        assertEquals(meta.getColumnName(3), "surname");
-        assertEquals(meta.getColumnName(4), "dob");
+        assertEquals(4, meta.getColumnCount());
+        assertEquals("pid", meta.getColumnName(1));
+        assertEquals("firstname", meta.getColumnName(2));
+        assertEquals("surname", meta.getColumnName(3));
+        assertEquals("dob", meta.getColumnName(4));
     }
 
     @Test public void nullable() throws SQLException {
         meta = stat.executeQuery("select null;").getMetaData();
-        assertEquals(meta.isNullable(1), ResultSetMetaData.columnNullable);
+        assertEquals(ResultSetMetaData.columnNullable, meta.isNullable(1));
     }
 
     @Test(expected= SQLException.class)

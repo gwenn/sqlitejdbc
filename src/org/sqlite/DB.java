@@ -328,6 +328,7 @@ abstract class DB implements Codes
      * mode.
      */
     final void ensureAutoCommit() throws SQLException {
+        /*
         if (!conn.getAutoCommit())
             return;
 
@@ -341,12 +342,12 @@ abstract class DB implements Codes
                 return; // assume we are in a transaction
             if (step(commit) != SQLITE_DONE) {
                 reset(commit);
-                throwex();
+                throw new SQLException("unable to auto-commit");
             }
-            //throw new SQLException("unable to auto-commit");
         } finally {
             reset(begin);
             reset(commit);
         }
+        */
     }
 }

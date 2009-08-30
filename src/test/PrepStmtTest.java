@@ -51,15 +51,15 @@ public class PrepStmtTest
                 "create table s1 (c1);").executeUpdate(), 0);
         PreparedStatement prep = conn.prepareStatement(
                 "insert into s1 values (?);");
-        prep.setInt(1, 3); assertEquals(prep.executeUpdate(), 1);
-        prep.setInt(1, 5); assertEquals(prep.executeUpdate(), 1);
-        prep.setInt(1, 7); assertEquals(prep.executeUpdate(), 1);
+        prep.setInt(1, 3); assertEquals(1, prep.executeUpdate());
+        prep.setInt(1, 5); assertEquals(1, prep.executeUpdate());
+        prep.setInt(1, 7); assertEquals(1, prep.executeUpdate());
         prep.close();
 
         // check results with normal statement
         ResultSet rs = stat.executeQuery("select sum(c1) from s1;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 15);
+        assertEquals(15, rs.getInt(1));
         rs.close();
     }
 
@@ -91,10 +91,10 @@ public class PrepStmtTest
         prep.setInt(1, Integer.MAX_VALUE);
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), Integer.MAX_VALUE);
-        assertEquals(rs.getString(1), Integer.toString(Integer.MAX_VALUE));
-        assertEquals(rs.getDouble(1),
-                new Integer(Integer.MAX_VALUE).doubleValue());
+        assertEquals(Integer.MAX_VALUE, rs.getInt(1));
+        assertEquals(Integer.toString(Integer.MAX_VALUE), rs.getString(1));
+        assertEquals(new Integer(Integer.MAX_VALUE).doubleValue(),
+                rs.getDouble(1));
         assertFalse(rs.next());
         rs.close();
         prep.close();
@@ -107,9 +107,9 @@ public class PrepStmtTest
         prep.setDouble(2, Double.MIN_VALUE);
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getDouble(1), Double.MAX_VALUE);
+        assertEquals(Double.MAX_VALUE, rs.getDouble(1));
         assertTrue(rs.next());
-        assertEquals(rs.getDouble(1), Double.MIN_VALUE);
+        assertEquals(Double.MIN_VALUE, rs.getDouble(1));
         assertFalse(rs.next());
         rs.close();
     }
@@ -120,7 +120,7 @@ public class PrepStmtTest
         prep.setString(1, name);
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getString(1), name);
+        assertEquals(name, rs.getString(1));
         assertFalse(rs.next());
         rs.close();
     }
@@ -140,9 +140,9 @@ public class PrepStmtTest
         prep.setInt(3, 0);
         rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), Integer.MIN_VALUE);
-        assertEquals(rs.getInt(2), Integer.MAX_VALUE);
-        assertEquals(rs.getInt(3), 0);
+        assertEquals(Integer.MIN_VALUE, rs.getInt(1));
+        assertEquals(Integer.MAX_VALUE, rs.getInt(2));
+        assertEquals(0, rs.getInt(3));
 
         // strings
         String name = "Winston Leonard Churchill";
@@ -155,9 +155,9 @@ public class PrepStmtTest
         prep.setString(3, sn);
         prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getString(1), fn);
-        assertEquals(rs.getString(2), mn);
-        assertEquals(rs.getString(3), sn);
+        assertEquals(fn, rs.getString(1));
+        assertEquals(mn, rs.getString(2));
+        assertEquals(sn, rs.getString(3));
 
         // mixed
         prep.setString(1, name);
@@ -165,10 +165,10 @@ public class PrepStmtTest
         prep.setLong(3, Long.MAX_VALUE);
         prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getString(1), name);
+        assertEquals(name, rs.getString(1));
         assertNull(rs.getString(2));
         assertTrue(rs.wasNull());
-        assertEquals(rs.getLong(3), Long.MAX_VALUE);
+        assertEquals(Long.MAX_VALUE, rs.getLong(3));
 
         // bytes
         prep.setBytes(1, b1);
@@ -194,8 +194,8 @@ public class PrepStmtTest
         assertTrue(rs.next());
         assertNull(rs.getString("col1"));
         assertTrue(rs.wasNull());
-        assertEquals(rs.getFloat("col2"), Float.MIN_VALUE);
-        assertEquals(rs.getShort("bingo"), Short.MIN_VALUE);
+        assertEquals(Float.MIN_VALUE, rs.getFloat("col2"));
+        assertEquals(Short.MIN_VALUE, rs.getShort("bingo"));
         rs.close();
         prep.close();
     }
@@ -213,7 +213,7 @@ public class PrepStmtTest
 
         ResultSet rs = stat.executeQuery("select count(a) from in1000;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 1000);
+        assertEquals(1000, rs.getInt(1));
         rs.close();
     }
 
@@ -237,13 +237,13 @@ public class PrepStmtTest
             "select c1,c2,c3,c4,c5,c6,c7 from testobj;");
         assertTrue(rs.next());
 
-        assertEquals(rs.getInt(1), Integer.MAX_VALUE);
-        assertEquals((int)rs.getLong(1), Integer.MAX_VALUE);
-        assertEquals(rs.getFloat(2), Float.MAX_VALUE);
-        assertEquals(rs.getDouble(3), Double.MAX_VALUE);
-        assertEquals(rs.getLong(4), Long.MAX_VALUE);
+        assertEquals(Integer.MAX_VALUE, rs.getInt(1));
+        assertEquals(Integer.MAX_VALUE, (int)rs.getLong(1));
+        assertEquals(Float.MAX_VALUE, rs.getFloat(2));
+        assertEquals(Double.MAX_VALUE, rs.getDouble(3));
+        assertEquals(Long.MAX_VALUE, rs.getLong(4));
         assertFalse(rs.getBoolean(5));
-        assertEquals(rs.getByte(6), (byte)7);
+        assertEquals((byte)7, rs.getByte(6));
         assertArrayEq(rs.getBytes(7), b1);
 
         assertNotNull(rs.getObject(1));
@@ -275,21 +275,21 @@ public class PrepStmtTest
         prep.setString(1, substr);
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getString(1), substr);
+        assertEquals(substr, rs.getString(1));
     }
 
     @Test public void utf() throws SQLException {
         ResultSet rs = stat.executeQuery("select '"
                 +utf01+"','"+utf02+"','"+utf03+"','"+utf04+"','"
                 +utf05+"','"+utf06+"','"+utf07+"','"+utf08+"';");
-        assertEquals(rs.getString(1), utf01);
-        assertEquals(rs.getString(2), utf02);
-        assertEquals(rs.getString(3), utf03);
-        assertEquals(rs.getString(4), utf04);
-        assertEquals(rs.getString(5), utf05);
-        assertEquals(rs.getString(6), utf06);
-        assertEquals(rs.getString(7), utf07);
-        assertEquals(rs.getString(8), utf08);
+        assertEquals(utf01, rs.getString(1));
+        assertEquals(utf02, rs.getString(2));
+        assertEquals(utf03, rs.getString(3));
+        assertEquals(utf04, rs.getString(4));
+        assertEquals(utf05, rs.getString(5));
+        assertEquals(utf06, rs.getString(6));
+        assertEquals(utf07, rs.getString(7));
+        assertEquals(utf08, rs.getString(8));
         rs.close();
 
         PreparedStatement prep = conn.prepareStatement(
@@ -300,14 +300,14 @@ public class PrepStmtTest
         prep.setString(7, utf07); prep.setString(8, utf08);
         rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getString(1), utf01);
-        assertEquals(rs.getString(2), utf02);
-        assertEquals(rs.getString(3), utf03);
-        assertEquals(rs.getString(4), utf04);
-        assertEquals(rs.getString(5), utf05);
-        assertEquals(rs.getString(6), utf06);
-        assertEquals(rs.getString(7), utf07);
-        assertEquals(rs.getString(8), utf08);
+        assertEquals(utf01, rs.getString(1));
+        assertEquals(utf02, rs.getString(2));
+        assertEquals(utf03, rs.getString(3));
+        assertEquals(utf04, rs.getString(4));
+        assertEquals(utf05, rs.getString(5));
+        assertEquals(utf06, rs.getString(6));
+        assertEquals(utf07, rs.getString(7));
+        assertEquals(utf08, rs.getString(8));
         rs.close();
     }
 
@@ -325,16 +325,16 @@ public class PrepStmtTest
             prep.addBatch();
         }
         assertArrayEq(prep.executeBatch(), new int[] { 1,1,1,1,1,1,1,1,1,1 });
-        assertEquals(prep.executeBatch().length, 0);
+        assertEquals(0, prep.executeBatch().length);
         prep.close();
 
         rs = stat.executeQuery("select * from test;");
         for (int i=0; i < 10; i++) {
             assertTrue(rs.next());
-            assertEquals(rs.getInt(1), Integer.MIN_VALUE + i);
-            assertEquals(rs.getFloat(2), Float.MIN_VALUE + i);
-            assertEquals(rs.getString(3), "Hello " + i);
-            assertEquals(rs.getDouble(4), Double.MAX_VALUE + i);
+            assertEquals(Integer.MIN_VALUE + i, rs.getInt(1));
+            assertEquals(Float.MIN_VALUE + i, rs.getFloat(2));
+            assertEquals("Hello " + i, rs.getString(3));
+            assertEquals(Double.MAX_VALUE + i, rs.getDouble(4));
         }
         rs.close();
         stat.executeUpdate("drop table test;");
@@ -354,17 +354,17 @@ public class PrepStmtTest
 
         ResultSet rs = stat.executeQuery("select * from test;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 10);
-        assertEquals(rs.getString(2), "ten");
+        assertEquals(10, rs.getInt(1));
+        assertEquals("ten", rs.getString(2));
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 100);
-        assertEquals(rs.getString(2), "hundred");
+        assertEquals(100, rs.getInt(1));
+        assertEquals("hundred", rs.getString(2));
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 100);
-        assertEquals(rs.getString(2), "one hundred");
+        assertEquals(100, rs.getInt(1));
+        assertEquals("one hundred", rs.getString(2));
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 1000);
-        assertEquals(rs.getString(2), "thousand");
+        assertEquals(1000, rs.getInt(1));
+        assertEquals("thousand", rs.getString(2));
         assertFalse(rs.next());
         rs.close();
     }
@@ -397,29 +397,29 @@ public class PrepStmtTest
         prep.close();
         ResultSet rs = stat.executeQuery("select count(*) from test;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 10);
+        assertEquals(10, rs.getInt(1));
         rs.close();
     }
 
     @Test public void paramMetaData() throws SQLException {
         PreparedStatement prep = conn.prepareStatement("select ?,?,?,?;");
-        assertEquals(prep.getParameterMetaData().getParameterCount(), 4);
+        assertEquals(4, prep.getParameterMetaData().getParameterCount());
     }
 
     @Test public void metaData() throws SQLException {
         PreparedStatement prep = conn.prepareStatement(
                 "select ? as col1, ? as col2, ? as delta;");
         ResultSetMetaData meta = prep.getMetaData();
-        assertEquals(meta.getColumnCount(), 3);
-        assertEquals(meta.getColumnName(1), "col1");
-        assertEquals(meta.getColumnName(2), "col2");
-        assertEquals(meta.getColumnName(3), "delta");
-        /*assertEquals(meta.getColumnType(1), Types.INTEGER);
-        assertEquals(meta.getColumnType(2), Types.INTEGER);
-        assertEquals(meta.getColumnType(3), Types.INTEGER);*/
+        assertEquals(3, meta.getColumnCount());
+        assertEquals("col1", meta.getColumnName(1));
+        assertEquals("col2", meta.getColumnName(2));
+        assertEquals("delta", meta.getColumnName(3));
+        /*assertEquals(Types.INTEGER, meta.getColumnType(1));
+        assertEquals(Types.INTEGER, meta.getColumnType(2));
+        assertEquals(Types.INTEGER, meta.getColumnType(3));*/
 
         meta = prep.executeQuery().getMetaData();
-        assertEquals(meta.getColumnCount(), 3);
+        assertEquals(3, meta.getColumnCount());
         prep.close();
     }
 
@@ -436,10 +436,10 @@ public class PrepStmtTest
 
         ResultSet rs = stat.executeQuery("select c1 from t;");
         assertTrue(rs.next());
-        assertEquals(rs.getLong(1), d1.getTime());
+        assertEquals(d1.getTime(), rs.getLong(1));
         assertTrue(rs.getDate(1).equals(d1));
         assertTrue(rs.next());
-        assertEquals(rs.getDate(1), null);
+        assertEquals(null, rs.getDate(1));
         rs.close();
     }
 
@@ -454,7 +454,7 @@ public class PrepStmtTest
         ResultSet rs = stat.executeQuery(
             "select strftime('%s', c1) * 1000 from t;");
         assertTrue(rs.next());
-        assertEquals(rs.getLong(1), d1.getTime());
+        assertEquals(d1.getTime(), rs.getLong(1));
         assertTrue(rs.getDate(1).equals(d1));
     }
 
@@ -541,16 +541,16 @@ public class PrepStmtTest
             prep.setInt(2, i);
             ResultSet rs = prep.executeQuery();
             assertTrue(rs.next());
-            assertEquals(rs.getInt(1), 9);
-            assertEquals(rs.getInt(2), i);
+            assertEquals(9, rs.getInt(1));
+            assertEquals(i, rs.getInt(2));
         }
 
         for (int i=0; i < 10; i++) {
             prep.setInt(2, i);
             ResultSet rs = prep.executeQuery();
             assertTrue(rs.next());
-            assertEquals(rs.getInt(1), 9);
-            assertEquals(rs.getInt(2), i);
+            assertEquals(9, rs.getInt(1));
+            assertEquals(i, rs.getInt(2));
             rs.close();
         }
 
@@ -563,7 +563,7 @@ public class PrepStmtTest
         prep.setMaxRows(1);
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 1);
+        assertEquals(1, rs.getInt(1));
         assertFalse(rs.next());
         prep.close();
     }

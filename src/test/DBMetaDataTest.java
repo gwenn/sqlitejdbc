@@ -70,9 +70,9 @@ public class DBMetaDataTest
         ResultSet rs = meta.getTableTypes();
         assertNotNull(rs);
         assertTrue(rs.next());
-        assertEquals(rs.getString("TABLE_TYPE"), "TABLE");
+        assertEquals("TABLE", rs.getString("TABLE_TYPE"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("TABLE_TYPE"), "VIEW");
+        assertEquals("VIEW", rs.getString("TABLE_TYPE"));
         assertFalse(rs.next());
     }
 
@@ -95,53 +95,53 @@ public class DBMetaDataTest
     @Test public void getColumns() throws SQLException {
         ResultSet rs = meta.getColumns(null, null, "test", "id");
         assertTrue(rs.next());
-        assertEquals(rs.getString("TABLE_NAME"), "test");
-        assertEquals(rs.getString("COLUMN_NAME"), "id");
+        assertEquals("test", rs.getString("TABLE_NAME"));
+        assertEquals("id", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
 
         rs = meta.getColumns(null, null, "test", "fn");
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "fn");
+        assertEquals("fn", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
 
         rs = meta.getColumns(null, null, "test", "sn");
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "sn");
+        assertEquals("sn", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
 
         rs = meta.getColumns(null, null, "test", "%");
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "id");
+        assertEquals("id", rs.getString("COLUMN_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "fn");
+        assertEquals("fn", rs.getString("COLUMN_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "sn");
+        assertEquals("sn", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
 
         rs = meta.getColumns(null, null, "test", "%n");
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "fn");
+        assertEquals("fn", rs.getString("COLUMN_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "sn");
+        assertEquals("sn", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
 
         rs = meta.getColumns(null, null, "test%", "%");
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "id");
+        assertEquals("id", rs.getString("COLUMN_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "fn");
+        assertEquals("fn", rs.getString("COLUMN_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "sn");
+        assertEquals("sn", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
 
         rs = meta.getColumns(null, null, "%", "%");
         assertTrue(rs.next());
-        assertEquals(rs.getString("TABLE_NAME"), "test");
-        assertEquals(rs.getString("COLUMN_NAME"), "id");
+        assertEquals("test", rs.getString("TABLE_NAME"));
+        assertEquals("id", rs.getString("COLUMN_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "fn");
+        assertEquals("fn", rs.getString("COLUMN_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "sn");
+        assertEquals("sn", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
 
         rs = meta.getColumns(null, null, "doesnotexist", "%");
@@ -152,80 +152,80 @@ public class DBMetaDataTest
         ResultSet rs = meta.getTables(null, null, null, null);
         assertTrue(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 10);
-        assertEquals(rsmeta.getColumnName(1), "TABLE_CAT");
-        assertEquals(rsmeta.getColumnName(2), "TABLE_SCHEM");
-        assertEquals(rsmeta.getColumnName(3), "TABLE_NAME");
-        assertEquals(rsmeta.getColumnName(4), "TABLE_TYPE");
-        assertEquals(rsmeta.getColumnName(5), "REMARKS");
-        assertEquals(rsmeta.getColumnName(6), "TYPE_CAT");
-        assertEquals(rsmeta.getColumnName(7), "TYPE_SCHEM");
-        assertEquals(rsmeta.getColumnName(8), "TYPE_NAME");
-        assertEquals(rsmeta.getColumnName(9), "SELF_REFERENCING_COL_NAME");
-        assertEquals(rsmeta.getColumnName(10), "REF_GENERATION");
+        assertEquals(10, rsmeta.getColumnCount());
+        assertEquals("TABLE_CAT", rsmeta.getColumnName(1));
+        assertEquals("TABLE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("TABLE_NAME", rsmeta.getColumnName(3));
+        assertEquals("TABLE_TYPE", rsmeta.getColumnName(4));
+        assertEquals("REMARKS", rsmeta.getColumnName(5));
+        assertEquals("TYPE_CAT", rsmeta.getColumnName(6));
+        assertEquals("TYPE_SCHEM", rsmeta.getColumnName(7));
+        assertEquals("TYPE_NAME", rsmeta.getColumnName(8));
+        assertEquals("SELF_REFERENCING_COL_NAME", rsmeta.getColumnName(9));
+        assertEquals("REF_GENERATION", rsmeta.getColumnName(10));
     }
 
     @Test public void columnOrderOfgetTableTypes() throws SQLException {
         ResultSet rs = meta.getTableTypes();
         assertTrue(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 1);
-        assertEquals(rsmeta.getColumnName(1), "TABLE_TYPE");
+        assertEquals(1, rsmeta.getColumnCount());
+        assertEquals("TABLE_TYPE", rsmeta.getColumnName(1));
     }
 
     @Test public void columnOrderOfgetTypeInfo() throws SQLException {
         ResultSet rs = meta.getTypeInfo();
         assertTrue(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 18);
-        assertEquals(rsmeta.getColumnName(1), "TYPE_NAME");
-        assertEquals(rsmeta.getColumnName(2), "DATA_TYPE");
-        assertEquals(rsmeta.getColumnName(3), "PRECISION");
-        assertEquals(rsmeta.getColumnName(4), "LITERAL_PREFIX");
-        assertEquals(rsmeta.getColumnName(5), "LITERAL_SUFFIX");
-        assertEquals(rsmeta.getColumnName(6), "CREATE_PARAMS");
-        assertEquals(rsmeta.getColumnName(7), "NULLABLE");
-        assertEquals(rsmeta.getColumnName(8), "CASE_SENSITIVE");
-        assertEquals(rsmeta.getColumnName(9), "SEARCHABLE");
-        assertEquals(rsmeta.getColumnName(10), "UNSIGNED_ATTRIBUTE");
-        assertEquals(rsmeta.getColumnName(11), "FIXED_PREC_SCALE");
-        assertEquals(rsmeta.getColumnName(12), "AUTO_INCREMENT");
-        assertEquals(rsmeta.getColumnName(13), "LOCAL_TYPE_NAME");
-        assertEquals(rsmeta.getColumnName(14), "MINIMUM_SCALE");
-        assertEquals(rsmeta.getColumnName(15), "MAXIMUM_SCALE");
-        assertEquals(rsmeta.getColumnName(16), "SQL_DATA_TYPE");
-        assertEquals(rsmeta.getColumnName(17), "SQL_DATETIME_SUB");
-        assertEquals(rsmeta.getColumnName(18), "NUM_PREC_RADIX");
+        assertEquals(18, rsmeta.getColumnCount());
+        assertEquals("TYPE_NAME", rsmeta.getColumnName(1));
+        assertEquals("DATA_TYPE", rsmeta.getColumnName(2));
+        assertEquals("PRECISION", rsmeta.getColumnName(3));
+        assertEquals("LITERAL_PREFIX", rsmeta.getColumnName(4));
+        assertEquals("LITERAL_SUFFIX", rsmeta.getColumnName(5));
+        assertEquals("CREATE_PARAMS", rsmeta.getColumnName(6));
+        assertEquals("NULLABLE", rsmeta.getColumnName(7));
+        assertEquals("CASE_SENSITIVE", rsmeta.getColumnName(8));
+        assertEquals("SEARCHABLE", rsmeta.getColumnName(9));
+        assertEquals("UNSIGNED_ATTRIBUTE", rsmeta.getColumnName(10));
+        assertEquals("FIXED_PREC_SCALE", rsmeta.getColumnName(11));
+        assertEquals("AUTO_INCREMENT", rsmeta.getColumnName(12));
+        assertEquals("LOCAL_TYPE_NAME", rsmeta.getColumnName(13));
+        assertEquals("MINIMUM_SCALE", rsmeta.getColumnName(14));
+        assertEquals("MAXIMUM_SCALE", rsmeta.getColumnName(15));
+        assertEquals("SQL_DATA_TYPE", rsmeta.getColumnName(16));
+        assertEquals("SQL_DATETIME_SUB", rsmeta.getColumnName(17));
+        assertEquals("NUM_PREC_RADIX", rsmeta.getColumnName(18));
     }
 
     @Test public void columnOrderOfgetColumns() throws SQLException {
         ResultSet rs = meta.getColumns(null, null, "test", null);
         assertTrue(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 22);
-        assertEquals(rsmeta.getColumnName(1), "TABLE_CAT");
-        assertEquals(rsmeta.getColumnName(2), "TABLE_SCHEM");
-        assertEquals(rsmeta.getColumnName(3), "TABLE_NAME");
-        assertEquals(rsmeta.getColumnName(4), "COLUMN_NAME");
-        assertEquals(rsmeta.getColumnName(5), "DATA_TYPE");
-        assertEquals(rsmeta.getColumnName(6), "TYPE_NAME");
-        assertEquals(rsmeta.getColumnName(7), "COLUMN_SIZE");
-        assertEquals(rsmeta.getColumnName(8), "BUFFER_LENGTH");
-        assertEquals(rsmeta.getColumnName(9), "DECIMAL_DIGITS");
-        assertEquals(rsmeta.getColumnName(10), "NUM_PREC_RADIX");
-        assertEquals(rsmeta.getColumnName(11), "NULLABLE");
-        assertEquals(rsmeta.getColumnName(12), "REMARKS");
-        assertEquals(rsmeta.getColumnName(13), "COLUMN_DEF");
-        assertEquals(rsmeta.getColumnName(14), "SQL_DATA_TYPE");
-        assertEquals(rsmeta.getColumnName(15), "SQL_DATETIME_SUB");
-        assertEquals(rsmeta.getColumnName(16), "CHAR_OCTET_LENGTH");
-        assertEquals(rsmeta.getColumnName(17), "ORDINAL_POSITION");
-        assertEquals(rsmeta.getColumnName(18), "IS_NULLABLE");
+        assertEquals(22, rsmeta.getColumnCount());
+        assertEquals("TABLE_CAT", rsmeta.getColumnName(1));
+        assertEquals("TABLE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("TABLE_NAME", rsmeta.getColumnName(3));
+        assertEquals("COLUMN_NAME", rsmeta.getColumnName(4));
+        assertEquals("DATA_TYPE", rsmeta.getColumnName(5));
+        assertEquals("TYPE_NAME", rsmeta.getColumnName(6));
+        assertEquals("COLUMN_SIZE", rsmeta.getColumnName(7));
+        assertEquals("BUFFER_LENGTH", rsmeta.getColumnName(8));
+        assertEquals("DECIMAL_DIGITS", rsmeta.getColumnName(9));
+        assertEquals("NUM_PREC_RADIX", rsmeta.getColumnName(10));
+        assertEquals("NULLABLE", rsmeta.getColumnName(11));
+        assertEquals("REMARKS", rsmeta.getColumnName(12));
+        assertEquals("COLUMN_DEF", rsmeta.getColumnName(13));
+        assertEquals("SQL_DATA_TYPE", rsmeta.getColumnName(14));
+        assertEquals("SQL_DATETIME_SUB", rsmeta.getColumnName(15));
+        assertEquals("CHAR_OCTET_LENGTH", rsmeta.getColumnName(16));
+        assertEquals("ORDINAL_POSITION", rsmeta.getColumnName(17));
+        assertEquals("IS_NULLABLE", rsmeta.getColumnName(18));
         // should be SCOPE_CATALOG, but misspelt in the standard
-        assertEquals(rsmeta.getColumnName(19), "SCOPE_CATLOG");
-        assertEquals(rsmeta.getColumnName(20), "SCOPE_SCHEMA");
-        assertEquals(rsmeta.getColumnName(21), "SCOPE_TABLE");
-        assertEquals(rsmeta.getColumnName(22), "SOURCE_DATA_TYPE");
+        assertEquals("SCOPE_CATLOG", rsmeta.getColumnName(19));
+        assertEquals("SCOPE_SCHEMA", rsmeta.getColumnName(20));
+        assertEquals("SCOPE_TABLE", rsmeta.getColumnName(21));
+        assertEquals("SOURCE_DATA_TYPE", rsmeta.getColumnName(22));
     }
 
     // the following functions always return an empty resultset, so
@@ -235,94 +235,94 @@ public class DBMetaDataTest
         ResultSet rs = meta.getProcedures(null, null, null);
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 8);
-        assertEquals(rsmeta.getColumnName(1), "PROCEDURE_CAT");
-        assertEquals(rsmeta.getColumnName(2), "PROCEDURE_SCHEM");
-        assertEquals(rsmeta.getColumnName(3), "PROCEDURE_NAME");
+        assertEquals(8, rsmeta.getColumnCount());
+        assertEquals("PROCEDURE_CAT", rsmeta.getColumnName(1));
+        assertEquals("PROCEDURE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("PROCEDURE_NAME", rsmeta.getColumnName(3));
         // currently (Java 1.5), cols 4,5,6 are undefined
-        assertEquals(rsmeta.getColumnName(7), "REMARKS");
-        assertEquals(rsmeta.getColumnName(8), "PROCEDURE_TYPE");
+        assertEquals("REMARKS", rsmeta.getColumnName(7));
+        assertEquals("PROCEDURE_TYPE", rsmeta.getColumnName(8));
     }
 
     @Test public void columnOrderOfgetProcedurColumns() throws SQLException {
         ResultSet rs = meta.getProcedureColumns(null, null, null, null);
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 13);
-        assertEquals(rsmeta.getColumnName(1), "PROCEDURE_CAT");
-        assertEquals(rsmeta.getColumnName(2), "PROCEDURE_SCHEM");
-        assertEquals(rsmeta.getColumnName(3), "PROCEDURE_NAME");
-        assertEquals(rsmeta.getColumnName(4), "COLUMN_NAME");
-        assertEquals(rsmeta.getColumnName(5), "COLUMN_TYPE");
-        assertEquals(rsmeta.getColumnName(6), "DATA_TYPE");
-        assertEquals(rsmeta.getColumnName(7), "TYPE_NAME");
-        assertEquals(rsmeta.getColumnName(8), "PRECISION");
-        assertEquals(rsmeta.getColumnName(9), "LENGTH");
-        assertEquals(rsmeta.getColumnName(10), "SCALE");
-        assertEquals(rsmeta.getColumnName(11), "RADIX");
-        assertEquals(rsmeta.getColumnName(12), "NULLABLE");
-        assertEquals(rsmeta.getColumnName(13), "REMARKS");
+        assertEquals(13, rsmeta.getColumnCount());
+        assertEquals("PROCEDURE_CAT", rsmeta.getColumnName(1));
+        assertEquals("PROCEDURE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("PROCEDURE_NAME", rsmeta.getColumnName(3));
+        assertEquals("COLUMN_NAME", rsmeta.getColumnName(4));
+        assertEquals("COLUMN_TYPE", rsmeta.getColumnName(5));
+        assertEquals("DATA_TYPE", rsmeta.getColumnName(6));
+        assertEquals("TYPE_NAME", rsmeta.getColumnName(7));
+        assertEquals("PRECISION", rsmeta.getColumnName(8));
+        assertEquals("LENGTH", rsmeta.getColumnName(9));
+        assertEquals("SCALE", rsmeta.getColumnName(10));
+        assertEquals("RADIX", rsmeta.getColumnName(11));
+        assertEquals("NULLABLE", rsmeta.getColumnName(12));
+        assertEquals("REMARKS", rsmeta.getColumnName(13));
     }
 
     @Test public void columnOrderOfgetSchemas() throws SQLException {
         ResultSet rs = meta.getSchemas();
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 2);
-        assertEquals(rsmeta.getColumnName(1), "TABLE_SCHEM");
-        assertEquals(rsmeta.getColumnName(2), "TABLE_CATALOG");
+        assertEquals(2, rsmeta.getColumnCount());
+        assertEquals("TABLE_SCHEM", rsmeta.getColumnName(1));
+        assertEquals("TABLE_CATALOG", rsmeta.getColumnName(2));
     }
 
     @Test public void columnOrderOfgetCatalogs() throws SQLException {
         ResultSet rs = meta.getCatalogs();
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 1);
-        assertEquals(rsmeta.getColumnName(1), "TABLE_CAT");
+        assertEquals(1, rsmeta.getColumnCount());
+        assertEquals("TABLE_CAT", rsmeta.getColumnName(1));
     }
 
     @Test public void columnOrderOfgetColumnPrivileges() throws SQLException {
         ResultSet rs = meta.getColumnPrivileges(null, null, null, null);
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 8);
-        assertEquals(rsmeta.getColumnName(1), "TABLE_CAT");
-        assertEquals(rsmeta.getColumnName(2), "TABLE_SCHEM");
-        assertEquals(rsmeta.getColumnName(3), "TABLE_NAME");
-        assertEquals(rsmeta.getColumnName(4), "COLUMN_NAME");
-        assertEquals(rsmeta.getColumnName(5), "GRANTOR");
-        assertEquals(rsmeta.getColumnName(6), "GRANTEE");
-        assertEquals(rsmeta.getColumnName(7), "PRIVILEGE");
-        assertEquals(rsmeta.getColumnName(8), "IS_GRANTABLE");
+        assertEquals(8, rsmeta.getColumnCount());
+        assertEquals("TABLE_CAT", rsmeta.getColumnName(1));
+        assertEquals("TABLE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("TABLE_NAME", rsmeta.getColumnName(3));
+        assertEquals("COLUMN_NAME", rsmeta.getColumnName(4));
+        assertEquals("GRANTOR", rsmeta.getColumnName(5));
+        assertEquals("GRANTEE", rsmeta.getColumnName(6));
+        assertEquals("PRIVILEGE", rsmeta.getColumnName(7));
+        assertEquals("IS_GRANTABLE", rsmeta.getColumnName(8));
     }
 
     @Test public void columnOrderOfgetTablePrivileges() throws SQLException {
         ResultSet rs = meta.getTablePrivileges(null, null, null);
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 7);
-        assertEquals(rsmeta.getColumnName(1), "TABLE_CAT");
-        assertEquals(rsmeta.getColumnName(2), "TABLE_SCHEM");
-        assertEquals(rsmeta.getColumnName(3), "TABLE_NAME");
-        assertEquals(rsmeta.getColumnName(4), "GRANTOR");
-        assertEquals(rsmeta.getColumnName(5), "GRANTEE");
-        assertEquals(rsmeta.getColumnName(6), "PRIVILEGE");
-        assertEquals(rsmeta.getColumnName(7), "IS_GRANTABLE");
+        assertEquals(7, rsmeta.getColumnCount());
+        assertEquals("TABLE_CAT", rsmeta.getColumnName(1));
+        assertEquals("TABLE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("TABLE_NAME", rsmeta.getColumnName(3));
+        assertEquals("GRANTOR", rsmeta.getColumnName(4));
+        assertEquals("GRANTEE", rsmeta.getColumnName(5));
+        assertEquals("PRIVILEGE", rsmeta.getColumnName(6));
+        assertEquals("IS_GRANTABLE", rsmeta.getColumnName(7));
     }
 
     @Test public void columnOrderOfgetBestRowIdentifier() throws SQLException {
         ResultSet rs = meta.getBestRowIdentifier(null, null, null, 0, false);
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 8);
-        assertEquals(rsmeta.getColumnName(1), "SCOPE");
-        assertEquals(rsmeta.getColumnName(2), "COLUMN_NAME");
-        assertEquals(rsmeta.getColumnName(3), "DATA_TYPE");
-        assertEquals(rsmeta.getColumnName(4), "TYPE_NAME");
-        assertEquals(rsmeta.getColumnName(5), "COLUMN_SIZE");
-        assertEquals(rsmeta.getColumnName(6), "BUFFER_LENGTH");
-        assertEquals(rsmeta.getColumnName(7), "DECIMAL_DIGITS");
-        assertEquals(rsmeta.getColumnName(8), "PSEUDO_COLUMN");
+        assertEquals(8, rsmeta.getColumnCount());
+        assertEquals("SCOPE", rsmeta.getColumnName(1));
+        assertEquals("COLUMN_NAME", rsmeta.getColumnName(2));
+        assertEquals("DATA_TYPE", rsmeta.getColumnName(3));
+        assertEquals("TYPE_NAME", rsmeta.getColumnName(4));
+        assertEquals("COLUMN_SIZE", rsmeta.getColumnName(5));
+        assertEquals("BUFFER_LENGTH", rsmeta.getColumnName(6));
+        assertEquals("DECIMAL_DIGITS", rsmeta.getColumnName(7));
+        assertEquals("PSEUDO_COLUMN", rsmeta.getColumnName(8));
         rs = meta.getBestRowIdentifier(null, null, "test", 0, false);
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
@@ -339,15 +339,15 @@ public class DBMetaDataTest
         ResultSet rs = meta.getVersionColumns(null, null, null);
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 8);
-        assertEquals(rsmeta.getColumnName(1), "SCOPE");
-        assertEquals(rsmeta.getColumnName(2), "COLUMN_NAME");
-        assertEquals(rsmeta.getColumnName(3), "DATA_TYPE");
-        assertEquals(rsmeta.getColumnName(4), "TYPE_NAME");
-        assertEquals(rsmeta.getColumnName(5), "COLUMN_SIZE");
-        assertEquals(rsmeta.getColumnName(6), "BUFFER_LENGTH");
-        assertEquals(rsmeta.getColumnName(7), "DECIMAL_DIGITS");
-        assertEquals(rsmeta.getColumnName(8), "PSEUDO_COLUMN");
+        assertEquals(8, rsmeta.getColumnCount());
+        assertEquals("SCOPE", rsmeta.getColumnName(1));
+        assertEquals("COLUMN_NAME", rsmeta.getColumnName(2));
+        assertEquals("DATA_TYPE", rsmeta.getColumnName(3));
+        assertEquals("TYPE_NAME", rsmeta.getColumnName(4));
+        assertEquals("COLUMN_SIZE", rsmeta.getColumnName(5));
+        assertEquals("BUFFER_LENGTH", rsmeta.getColumnName(6));
+        assertEquals("DECIMAL_DIGITS", rsmeta.getColumnName(7));
+        assertEquals("PSEUDO_COLUMN", rsmeta.getColumnName(8));
     }
 
     @Test public void columnOrderOfgetPrimaryKeys() throws SQLException {
@@ -363,32 +363,32 @@ public class DBMetaDataTest
         rs = meta.getPrimaryKeys(null, null, "nopk");
         assertFalse(rs.next());
         rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 6);
-        assertEquals(rsmeta.getColumnName(1), "TABLE_CAT");
-        assertEquals(rsmeta.getColumnName(2), "TABLE_SCHEM");
-        assertEquals(rsmeta.getColumnName(3), "TABLE_NAME");
-        assertEquals(rsmeta.getColumnName(4), "COLUMN_NAME");
-        assertEquals(rsmeta.getColumnName(5), "KEY_SEQ");
-        assertEquals(rsmeta.getColumnName(6), "PK_NAME");
+        assertEquals(6, rsmeta.getColumnCount());
+        assertEquals("TABLE_CAT", rsmeta.getColumnName(1));
+        assertEquals("TABLE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("TABLE_NAME", rsmeta.getColumnName(3));
+        assertEquals("COLUMN_NAME", rsmeta.getColumnName(4));
+        assertEquals("KEY_SEQ", rsmeta.getColumnName(5));
+        assertEquals("PK_NAME", rsmeta.getColumnName(6));
         rs.close();
 
         rs = meta.getPrimaryKeys(null, null, "pk1");
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "col1");
+        assertEquals("col1", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
         rs.close();
 
         rs = meta.getPrimaryKeys(null, null, "pk2");
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "col2");
+        assertEquals("col2", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
         rs.close();
 
         rs = meta.getPrimaryKeys(null, null, "pk3");
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "col2");
+        assertEquals("col2", rs.getString("COLUMN_NAME"));
         assertTrue(rs.next());
-        assertEquals(rs.getString("COLUMN_NAME"), "col3");
+        assertEquals("col3", rs.getString("COLUMN_NAME"));
         assertFalse(rs.next());
         rs.close();
     }
@@ -407,14 +407,14 @@ public class DBMetaDataTest
         ResultSet rs = meta.getUDTs(null, null, null, null);
         assertFalse(rs.next());
         ResultSetMetaData rsmeta = rs.getMetaData();
-        assertEquals(rsmeta.getColumnCount(), 7);
-        assertEquals(rsmeta.getColumnName(1), "TYPE_CAT");
-        assertEquals(rsmeta.getColumnName(2), "TYPE_SCHEM");
-        assertEquals(rsmeta.getColumnName(3), "TYPE_NAME");
-        assertEquals(rsmeta.getColumnName(4), "CLASS_NAME");
-        assertEquals(rsmeta.getColumnName(5), "DATA_TYPE");
-        assertEquals(rsmeta.getColumnName(6), "REMARKS");
-        assertEquals(rsmeta.getColumnName(7), "BASE_TYPE");
+        assertEquals(7, rsmeta.getColumnCount());
+        assertEquals("TYPE_CAT", rsmeta.getColumnName(1));
+        assertEquals("TYPE_SCHEM", rsmeta.getColumnName(2));
+        assertEquals("TYPE_NAME", rsmeta.getColumnName(3));
+        assertEquals("CLASS_NAME", rsmeta.getColumnName(4));
+        assertEquals("DATA_TYPE", rsmeta.getColumnName(5));
+        assertEquals("REMARKS", rsmeta.getColumnName(6));
+        assertEquals("BASE_TYPE", rsmeta.getColumnName(7));
     }
 
     @Test public void version() throws SQLException {

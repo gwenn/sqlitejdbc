@@ -25,13 +25,17 @@ public class StatementTest
     }
 
     @Test public void stmtUpdate() throws SQLException {
-        assertEquals(stat.executeUpdate("create table s1 (c1);"), 0);
-        assertEquals(stat.executeUpdate("insert into s1 values (0);"), 1);
-        assertEquals(stat.executeUpdate("insert into s1 values (1);"), 1);
-        assertEquals(stat.executeUpdate("insert into s1 values (2);"), 1);
-        assertEquals(stat.executeUpdate("update s1 set c1 = 5;"), 3);
-        assertEquals(stat.executeUpdate("delete from s1;"), 3);
-        assertEquals(stat.executeUpdate("drop table s1;"), 3);
+        assertEquals(0, stat.executeUpdate("create table s1 (c1);"));
+        assertEquals(1, stat.executeUpdate("insert into s1 values (0);"));
+        assertEquals(1, stat.executeUpdate("insert into s1 values (1);"));
+        assertEquals(1, stat.executeUpdate("insert into s1 values (2);"));
+        ResultSet rs = stat.executeQuery("select count(c1) from s1;");
+        assertTrue(rs.next());
+        assertEquals(3, rs.getInt(1));
+        rs.close();
+        assertEquals(3, stat.executeUpdate("update s1 set c1 = 5;"));
+        assertEquals(3, stat.executeUpdate("delete from s1;"));
+        assertEquals(3, stat.executeUpdate("drop table s1;"));
     }
 
     @Test public void emptyRS() throws SQLException {
@@ -43,10 +47,10 @@ public class StatementTest
     @Test public void singleRowRS() throws SQLException {
         ResultSet rs = stat.executeQuery("select " + Integer.MAX_VALUE + ";");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), Integer.MAX_VALUE);
-        assertEquals(rs.getString(1), Integer.toString(Integer.MAX_VALUE));
-        assertEquals(rs.getDouble(1),
-                new Integer(Integer.MAX_VALUE).doubleValue());
+        assertEquals(Integer.MAX_VALUE, rs.getInt(1));
+        assertEquals(Integer.toString(Integer.MAX_VALUE), rs.getString(1));
+        assertEquals(new Integer(Integer.MAX_VALUE).doubleValue(),
+                rs.getDouble(1));
         assertFalse(rs.next());
         rs.close();
     }
@@ -54,9 +58,9 @@ public class StatementTest
     @Test public void twoRowRS() throws SQLException {
         ResultSet rs = stat.executeQuery("select 9 union all select 7;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 9);
+        assertEquals(9, rs.getInt(1));
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 7);
+        assertEquals(7, rs.getInt(1));
         assertFalse(rs.next());
         rs.close();
     }
@@ -68,7 +72,7 @@ public class StatementTest
     @Test public void stringRS() throws SQLException {
         ResultSet rs = stat.executeQuery("select \"Russell\";");
         assertTrue(rs.next());
-        assertEquals(rs.getString(1), "Russell");
+        assertEquals("Russell", rs.getString(1));
         assertFalse(rs.next());
         rs.close();
     }
@@ -81,16 +85,16 @@ public class StatementTest
         assertNull(rs.getString(1));
         assertTrue(rs.wasNull());
         assertFalse(stat.getMoreResults());
-        assertEquals(stat.getUpdateCount(), -1);
+        assertEquals(-1, stat.getUpdateCount());
 
         assertTrue(stat.execute("select null;"));
         assertFalse(stat.getMoreResults());
-        assertEquals(stat.getUpdateCount(), -1);
+        assertEquals(-1, stat.getUpdateCount());
 
         assertFalse(stat.execute("create table test (c1);"));
-        assertEquals(stat.getUpdateCount(), 0);
+        assertEquals(0, stat.getUpdateCount());
         assertFalse(stat.getMoreResults());
-        assertEquals(stat.getUpdateCount(), -1);
+        assertEquals(-1, stat.getUpdateCount());
     }
 
     @Test public void colNameAccess() throws SQLException {
@@ -104,21 +108,21 @@ public class StatementTest
                     "insert into tab values (2, 'John', 'Smith');"), 1);
         ResultSet rs = stat.executeQuery("select * from tab;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt("id"), 0);
-        assertEquals(rs.getString("firstname"), "Bob");
-        assertEquals(rs.getString("surname"), "Builder");
+        assertEquals(0, rs.getInt("id"));
+        assertEquals("Bob", rs.getString("firstname"));
+        assertEquals("Builder", rs.getString("surname"));
         assertTrue(rs.next());
-        assertEquals(rs.getInt("id"), 1);
-        assertEquals(rs.getString("firstname"), "Fred");
-        assertEquals(rs.getString("surname"), "Blogs");
+        assertEquals(1, rs.getInt("id"));
+        assertEquals("Fred", rs.getString("firstname"));
+        assertEquals("Blogs", rs.getString("surname"));
         assertTrue(rs.next());
-        assertEquals(rs.getInt("id"), 2);
-        assertEquals( rs.getString("id"), "2");
-        assertEquals(rs.getString("firstname"), "John");
-        assertEquals(rs.getString("surname"), "Smith");
+        assertEquals(2, rs.getInt("id"));
+        assertEquals("2",  rs.getString("id"));
+        assertEquals("John", rs.getString("firstname"));
+        assertEquals("Smith", rs.getString("surname"));
         assertFalse(rs.next());
         rs.close();
-        assertEquals(stat.executeUpdate("drop table tab;"), 1);
+        assertEquals(1, stat.executeUpdate("drop table tab;"));
     }
 
     @Test public void nulls() throws SQLException {
@@ -134,12 +138,12 @@ public class StatementTest
     }
 
     @Test public void tempTable() throws SQLException {
-        assertEquals(stat.executeUpdate("create temp table myTemp (a);"), 0);
-        assertEquals(stat.executeUpdate("insert into myTemp values (2);"), 1);
+        assertEquals(0, stat.executeUpdate("create temp table myTemp (a);"));
+        assertEquals(1, stat.executeUpdate("insert into myTemp values (2);"));
     }
 
     @Test public void insert1000() throws SQLException {
-        assertEquals(stat.executeUpdate("create table in1000 (a);"), 0);
+        assertEquals(0, stat.executeUpdate("create table in1000 (a);"));
         conn.setAutoCommit(false);
         for (int i=0; i < 1000; i++)
             assertEquals(stat.executeUpdate(
@@ -148,10 +152,10 @@ public class StatementTest
 
         ResultSet rs = stat.executeQuery("select count(a) from in1000;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 1000);
+        assertEquals(1000, rs.getInt(1));
         rs.close();
 
-        assertEquals(stat.executeUpdate("drop table in1000;"), 1);
+        assertEquals(1, stat.executeUpdate("drop table in1000;"));
     }
 
     private void assertArrayEq(int[] a, int[] b) {
@@ -208,12 +212,12 @@ public class StatementTest
         stat.executeUpdate("insert into t1 (v) values ('red');");
         rs = stat.getGeneratedKeys();
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 1);
+        assertEquals(1, rs.getInt(1));
         rs.close();
         stat.executeUpdate("insert into t1 (v) values ('blue');");
         rs = stat.getGeneratedKeys();
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 2);
+        assertEquals(2, rs.getInt(1));
         rs.close();
     }
 
@@ -222,11 +226,11 @@ public class StatementTest
         assertTrue(rs.isBeforeFirst());
         assertTrue(rs.next());
         assertTrue(rs.isFirst());
-        assertEquals(rs.getInt(1), 1);
+        assertEquals(1, rs.getInt(1));
         assertTrue(rs.next());
         assertFalse(rs.isBeforeFirst());
         assertFalse(rs.isFirst());
-        assertEquals(rs.getInt(1), 2);
+        assertEquals(2, rs.getInt(1));
         assertFalse(rs.next());
         assertFalse(rs.isBeforeFirst());
         rs.close();
@@ -240,16 +244,16 @@ public class StatementTest
         ResultSet rs = stat.executeQuery(
             "select a.c1 AS c1 from t1 a, t2 where a.c1=t2.c1;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt("c1"), 1);
+        assertEquals(1, rs.getInt("c1"));
         rs.close();
     }
 
     @Test public void maxRows() throws SQLException {
         stat.setMaxRows(1);
-        assertEquals(stat.getMaxRows(), 1);
+        assertEquals(1, stat.getMaxRows());
         ResultSet rs = stat.executeQuery("select 1 union select 2;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 1);
+        assertEquals(1, rs.getInt(1));
         assertFalse(rs.next());
         rs.close();
     }
@@ -257,9 +261,9 @@ public class StatementTest
     @Test public void nullDate() throws SQLException {
         ResultSet rs = stat.executeQuery("select null;");
         assertTrue(rs.next());
-        assertEquals(rs.getDate(1), null);
-        assertEquals(rs.getTime(1), null);
-        assertEquals(rs.getTimestamp(1), null);
+        assertEquals(null, rs.getDate(1));
+        assertEquals(null, rs.getTime(1));
+        assertEquals(null, rs.getTimestamp(1));
         rs.close();
     }
 
@@ -271,7 +275,7 @@ public class StatementTest
         ResultSet rs = stat.executeQuery(
             "select a.c1, b.c1 from t1 a, t2 b where a.c1=b.c2;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt("c1"), 1);
+        assertEquals(1, rs.getInt("c1"));
         rs.close();
     }
 

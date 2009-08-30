@@ -36,7 +36,7 @@ public class UDFTest
            public void xFunc() throws SQLException { val = 4; }
         });
         stat.executeQuery("select f1();").close();
-        assertEquals(val, 4);
+        assertEquals(4, val);
     }
 
     @Test public void returning() throws SQLException {
@@ -45,13 +45,13 @@ public class UDFTest
         });
         ResultSet rs = stat.executeQuery("select f2();");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 4);
+        assertEquals(4, rs.getInt(1));
         rs.close();
 
         for (int i=0; i < 20; i++) {
             rs = stat.executeQuery("select (f2() + " + i + ");");
             assertTrue(rs.next());
-            assertEquals(rs.getInt(1), 4 + i);
+            assertEquals(4 + i, rs.getInt(1));
             rs.close();
         }
     }
@@ -63,7 +63,7 @@ public class UDFTest
         for (int i=0; i < 15; i++) {
             ResultSet rs = stat.executeQuery("select f3("+i+");");
             assertTrue(rs.next());
-            assertEquals(rs.getInt(1), i);
+            assertEquals(i, rs.getInt(1));
             rs.close();
         }
     }
@@ -78,15 +78,15 @@ public class UDFTest
         });
         ResultSet rs = stat.executeQuery("select f4(2, 3, 9, -5);");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 9);
+        assertEquals(9, rs.getInt(1));
         rs.close();
         rs = stat.executeQuery("select f4(2);");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 2);
+        assertEquals(2, rs.getInt(1));
         rs.close();
         rs = stat.executeQuery("select f4(-3, -4, -5);");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), -12);
+        assertEquals(-12, rs.getInt(1));
     }
 
     @Test public void returnTypes() throws SQLException {
@@ -95,21 +95,21 @@ public class UDFTest
         });
         ResultSet rs = stat.executeQuery("select f5();");
         assertTrue(rs.next());
-        assertEquals(rs.getString(1), "Hello World");
+        assertEquals("Hello World", rs.getString(1));
 
         Function.create(conn, "f6", new Function() {
             public void xFunc() throws SQLException { result(Long.MAX_VALUE); }
         });
         rs.close(); rs = stat.executeQuery("select f6();");
         assertTrue(rs.next());
-        assertEquals(rs.getLong(1), Long.MAX_VALUE);
+        assertEquals(Long.MAX_VALUE, rs.getLong(1));
 
         Function.create(conn, "f7", new Function() {
             public void xFunc() throws SQLException {result(Double.MAX_VALUE);}
         });
         rs.close(); rs = stat.executeQuery("select f7();");
         assertTrue(rs.next());
-        assertEquals(rs.getDouble(1), Double.MAX_VALUE);
+        assertEquals(Double.MAX_VALUE, rs.getDouble(1));
 
         Function.create(conn, "f8", new Function() {
             public void xFunc() throws SQLException { result(b1); }
@@ -127,7 +127,7 @@ public class UDFTest
         prep.setInt(1, Integer.MAX_VALUE);
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), Integer.MAX_VALUE);
+        assertEquals(Integer.MAX_VALUE, rs.getInt(1));
         prep.close();
     }
 
@@ -139,7 +139,7 @@ public class UDFTest
         prep.setLong(1, Long.MAX_VALUE);
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getLong(1), Long.MAX_VALUE);
+        assertEquals(Long.MAX_VALUE, rs.getLong(1));
         prep.close();
     }
 
@@ -151,7 +151,7 @@ public class UDFTest
         prep.setDouble(1, Double.MAX_VALUE);
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getDouble(1), Double.MAX_VALUE);
+        assertEquals(Double.MAX_VALUE, rs.getDouble(1));
         prep.close();
     }
 
@@ -175,7 +175,7 @@ public class UDFTest
         prep.setString(1, "Hello");
         ResultSet rs = prep.executeQuery();
         assertTrue(rs.next());
-        assertEquals(rs.getString(1), "Hello");
+        assertEquals("Hello", rs.getString(1));
         prep.close();
     }
 
@@ -199,7 +199,7 @@ public class UDFTest
             + " begin select inform(new.c1); end;"
         );
         stat.executeUpdate("insert into trigtest values (5);");
-        assertEquals(gotTrigger, 5);
+        assertEquals(5, gotTrigger);
     }
 
     @Test public void aggregate() throws SQLException {
@@ -228,7 +228,7 @@ public class UDFTest
            public void xFunc() throws SQLException { val = 9; }
         });
         stat.executeQuery("select f1();").close();
-        assertEquals(val, 9);
+        assertEquals(9, val);
 
         Function.destroy(conn, "f1");
         Function.destroy(conn, "f1");
@@ -262,7 +262,7 @@ public class UDFTest
                 "select f1() + f2() + f3() + f4() + f5() + f6()"
                 + " + f7() + f8() + f9() + f10() + f11();");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 1+2+3+4+5+6+7+8+9+10+11);
+        assertEquals(1+2+3+4+5+6+7+8+9+10+11, rs.getInt(1));
         rs.close();
     }
 
@@ -296,11 +296,11 @@ public class UDFTest
         // check that all of the threads successfully executed
         ResultSet rs = stat.executeQuery("select sum(col) from foo;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), times);
+        assertEquals(times, rs.getInt(1));
         rs.close();
 
         // check that custom function was executed each time
-        assertEquals(Integer.parseInt(func.toString()), times);
+        assertEquals(times, Integer.parseInt(func.toString()));
     }
 
     private void assertArrayEq(byte[] a, byte[] b) {

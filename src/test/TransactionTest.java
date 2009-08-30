@@ -43,12 +43,12 @@ public class TransactionTest
 
         ResultSet rs = stat1.executeQuery("select sum(c1) from test;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 6);
+        assertEquals(6, rs.getInt(1));
         rs.close();
 
         rs = stat3.executeQuery("select sum(c1) from test;");
         assertTrue(rs.next());
-        assertEquals(rs.getInt(1), 6);
+        assertEquals(6, rs.getInt(1));
         rs.close();
     }
 
@@ -202,17 +202,6 @@ public class TransactionTest
         assertTrue(rs.next());
 
         stat2.executeUpdate("insert into t values (3);"); // can't be done
-    }
-
-    @Test
-    public void cantUpdateWhileReading() throws SQLException {
-        stat1.executeUpdate("create table t (c1);");
-        stat1.executeUpdate("insert into t values (1);");
-        stat1.executeUpdate("insert into t values (2);");
-        ResultSet rs = conn1.createStatement().executeQuery("select * from t;");
-        assertTrue(rs.next());
-
-        stat1.executeUpdate("insert into t values (3);");
     }
 
     @Test
