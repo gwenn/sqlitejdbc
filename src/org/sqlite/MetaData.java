@@ -189,7 +189,7 @@ class MetaData implements DatabaseMetaData
     public boolean supportsColumnAliasing() { return true; }
     public boolean supportsConvert() { return false; }
     public boolean supportsConvert(int fromType, int toType) { return false; }
-    public boolean supportsCorrelatedSubqueries() { return false; }
+    public boolean supportsCorrelatedSubqueries() { return false; } // TODO Validate
     public boolean supportsDataDefinitionAndDataManipulationTransactions()
         { return true; }
     public boolean supportsDataManipulationTransactionsOnly() { return false; }
@@ -200,7 +200,7 @@ class MetaData implements DatabaseMetaData
     public boolean supportsExtendedSQLGrammar() { return false; }
     public boolean supportsLimitedOuterJoins() { return true; }
     public boolean supportsFullOuterJoins() { return false; }
-    public boolean supportsGetGeneratedKeys() { return false; }
+    public boolean supportsGetGeneratedKeys() { return false; } // TODO
     public boolean supportsGroupBy() { return true; }
     public boolean supportsGroupByBeyondSelect() { return false; }
     public boolean supportsGroupByUnrelated() { return false; }
@@ -236,6 +236,30 @@ class MetaData implements DatabaseMetaData
     public boolean supportsSchemasInTableDefinitions() { return false; }
     public boolean supportsSelectForUpdate() { return false; }
     public boolean supportsStatementPooling() { return false; }
+
+    public RowIdLifetime getRowIdLifetime() throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public boolean supportsStoredFunctionsUsingCallSyntax() { return false; }
+    public boolean autoCommitFailureClosesAllResultSets() { return false; }
+
+    public ResultSet getClientInfoProperties() throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern, String columnNamePattern) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
     public boolean supportsStoredProcedures() { return false; }
     public boolean supportsSubqueriesInComparisons() { return false; }
     public boolean supportsSubqueriesInExists() { return true; } // TODO: check
@@ -928,5 +952,13 @@ class MetaData implements DatabaseMetaData
         }
         buf.append('\'');
         return buf.toString();
+    }
+
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        throw new SQLException("Not a wrapper");
+    }
+
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
     }
 }

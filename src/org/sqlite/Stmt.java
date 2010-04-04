@@ -242,6 +242,19 @@ class Stmt extends Unused implements Statement, Codes
         return ResultSet.CONCUR_READ_ONLY; }
     public int getResultSetHoldability() throws SQLException {
         return ResultSet.CLOSE_CURSORS_AT_COMMIT; }
+
+    public boolean isClosed() throws SQLException {
+        return pointer == 0;
+    }
+
+    public void setPoolable(boolean poolable) throws SQLException {
+        // TODO
+    }
+
+    public boolean isPoolable() throws SQLException {
+        return false;  // TODO
+    }
+
     public int getResultSetType() throws SQLException {
         return ResultSet.TYPE_FORWARD_ONLY; }
 

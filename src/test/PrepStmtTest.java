@@ -458,6 +458,7 @@ public class PrepStmtTest
         assertTrue(rs.getDate(1).equals(d1));
     }
 
+    @SuppressWarnings("deprecation")
     @Test public void date() throws SQLException {
         connectWithJulianDayModeActivated();
         Date d1 = new Date(System.currentTimeMillis());
@@ -476,6 +477,7 @@ public class PrepStmtTest
         rs.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test public void time() throws SQLException {
         connectWithJulianDayModeActivated();
         Time d1 = new Time(System.currentTimeMillis());

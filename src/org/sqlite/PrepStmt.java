@@ -30,11 +30,14 @@ import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
+import java.sql.NClob;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -286,6 +289,78 @@ final class PrepStmt extends Stmt
         } catch (UnsupportedEncodingException e) {
             throw new SQLException(e.getMessage());
         }
+    }
+
+    public void setRowId(int parameterIndex, RowId x) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setNString(int parameterIndex, String value) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setNClob(int parameterIndex, NClob value) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setClob(int parameterIndex, Reader reader, long length) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setClob(int parameterIndex, Reader reader) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public void setNClob(int parameterIndex, Reader reader) throws SQLException {
+        throw new SQLException("NYI"); // TODO
     }
 
     private static void copy(InputStream input, OutputStream output) throws IOException {

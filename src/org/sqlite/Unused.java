@@ -56,6 +56,7 @@ abstract class Unused
         throws SQLException { throw unused(); }
     public void setRef(int i, Ref x)
         throws SQLException { throw unused(); }
+    @SuppressWarnings("deprecation")
     public void setUnicodeStream(int pos, InputStream x, int length)
         throws SQLException { throw unused(); }
     public void setURL(int pos, URL x)
@@ -68,8 +69,10 @@ abstract class Unused
         throws SQLException { throw unused(); }
     public Array getArray(String col)
         throws SQLException { throw unused(); }
+    @SuppressWarnings("deprecation")
     public BigDecimal getBigDecimal(int col, int s)
         throws SQLException { throw unused(); }
+    @SuppressWarnings("deprecation")
     public BigDecimal getBigDecimal(String col, int s)
         throws SQLException { throw unused(); }
     public Blob getBlob(int col)
@@ -89,8 +92,10 @@ abstract class Unused
     public Ref getRef(String col)
         throws SQLException { throw unused(); }
 
+    @SuppressWarnings("deprecation")
     public InputStream getUnicodeStream(int col)
         throws SQLException { throw unused(); }
+    @SuppressWarnings("deprecation")
     public InputStream getUnicodeStream(String col)
         throws SQLException { throw unused(); }
     public URL getURL(int col)
@@ -219,6 +224,89 @@ abstract class Unused
     public void updateTimestamp(String c, Timestamp x)
         throws SQLException { throw unused(); }
 
+    public void updateNString(int c, String x)
+        throws SQLException { throw unused(); }
+    public void updateNString(String c, String x)
+        throws SQLException { throw unused(); }
+    public void updateNClob(int c, NClob x)
+        throws SQLException { throw unused(); }
+    public void updateNClob(String c, NClob x)
+        throws SQLException { throw unused(); }
+
+    public void updateSQLXML(int c, SQLXML x)
+        throws SQLException { throw unused(); }
+    public void updateSQLXML(String c, SQLXML x)
+        throws SQLException { throw unused(); }
+
+    public void updateNCharacterStream(int c, Reader x, long l)
+        throws SQLException { throw unused(); }
+    public void updateNCharacterStream(String c, Reader x, long l)
+        throws SQLException { throw unused(); }
+    public void updateAsciiStream(int c, InputStream x, long l)
+        throws SQLException { throw unused(); }
+    public void updateBinaryStream(int c, InputStream x, long l)
+        throws SQLException { throw unused(); }
+    public void updateCharacterStream(int c, Reader x, long l)
+        throws SQLException { throw unused(); }
+    public void updateAsciiStream(String c, InputStream x, long l)
+        throws SQLException { throw unused(); }
+    public void updateBinaryStream(String c, InputStream x, long l)
+        throws SQLException { throw unused(); }
+    public void updateCharacterStream(String c, Reader x, long l)
+        throws SQLException { throw unused(); }
+    public void updateBlob(int c, InputStream x, long l)
+        throws SQLException { throw unused(); }
+    public void updateBlob(String c, InputStream x, long l)
+        throws SQLException { throw unused(); }
+    public void updateClob(int c, Reader x, long l)
+        throws SQLException { throw unused(); }
+    public void updateClob(String c, Reader x, long l)
+        throws SQLException { throw unused(); }
+    public void updateNClob(int c, Reader x, long l)
+        throws SQLException { throw unused(); }
+    public void updateNClob(String c, Reader x, long l)
+        throws SQLException { throw unused(); }
+    public void updateNCharacterStream(int c, Reader x)
+        throws SQLException { throw unused(); }
+    public void updateNCharacterStream(String c, Reader x)
+        throws SQLException { throw unused(); }
+    public void updateAsciiStream(int c, InputStream x)
+        throws SQLException { throw unused(); }
+    public void updateBinaryStream(int c, InputStream x)
+        throws SQLException { throw unused(); }
+    public void updateCharacterStream(int c, Reader x)
+        throws SQLException { throw unused(); }
+    public void updateAsciiStream(String c, InputStream x)
+        throws SQLException { throw unused(); }
+    public void updateBinaryStream(String c, InputStream x)
+        throws SQLException { throw unused(); }
+    public void updateCharacterStream(String c, Reader x)
+        throws SQLException { throw unused(); }
+    public void updateBlob(int c, InputStream x)
+        throws SQLException { throw unused(); }
+    public void updateBlob(String c, InputStream x)
+        throws SQLException { throw unused(); }
+    public void updateClob(int c, Reader x)
+        throws SQLException { throw unused(); }
+    public void updateClob(String c, Reader x)
+        throws SQLException { throw unused(); }
+    public void updateNClob(int c, Reader x)
+        throws SQLException { throw unused(); }
+    public void updateNClob(String c, Reader x)
+        throws SQLException { throw unused(); }
+
+    public void updateRowId(int c, RowId x)
+        throws SQLException { throw unused(); }
+    public void updateRowId(String c, RowId x)
+        throws SQLException { throw unused(); }
+
     public void refreshRow()
         throws SQLException { throw unused(); }
+
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        throw new SQLException("Not a wrapper");
+    }
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
+    }
 }

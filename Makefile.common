@@ -28,7 +28,7 @@ ifeq ($(arch),)
 arch := $(shell uname -m)
 endif
 
-sqlite_version := 3.6.17
+sqlite_version := 3.6.23.1
 sqlite := sqlite-$(sqlite_version)
 
 sqlitejdbc := sqlitejdbc-v$(shell cat VERSION)
@@ -38,11 +38,12 @@ ifneq ($(jni_md),)
 jni_include := $(shell dirname "$(jni_md)")
 endif
 
-libjdbc  := $(wildcard lib/jdbc-*.jar)
+# libjdbc  := $(wildcard lib/jdbc-*.jar)
 libjunit := $(wildcard lib/junit-*.jar)
 
 JAVA  := $$JAVA_HOME/bin/java
-JAVAC := $$JAVA_HOME/bin/javac -Xbootclasspath/p:$(libjdbc)
+# JAVAC := $$JAVA_HOME/bin/javac -Xbootclasspath/p:$(libjdbc)
+JAVAC := $$JAVA_HOME/bin/javac -Xlint
 JAVAH := $$JAVA_HOME/bin/javah
 JAR := $$JAVA_HOME/bin/jar
 
@@ -72,7 +73,7 @@ Darwin_LIBNAME   := libsqlitejdbc.jnilib
 
 Win_CC           := $(arch)-mingw32msvc-gcc
 Win_STRIP        := $(arch)-mingw32msvc-strip
-Win_CFLAGS       := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -O
+Win_CFLAGS       := -D_JNI_IMPLEMENTATION_ -I$(JAVA_HOME)/include -O
 Win_LINKFLAGS    := -Wl,--kill-at -shared
 Win_LIBNAME      := sqlitejdbc.dll
 

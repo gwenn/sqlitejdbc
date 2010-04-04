@@ -22,10 +22,13 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.NClob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -330,6 +333,50 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
         return getTimestamp(findColumn(col)); }
     public Timestamp getTimestamp(String c, Calendar ca) throws SQLException {
         return getTimestamp(findColumn(c), ca); }
+
+    public NClob getNClob(int col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public NClob getNClob(String col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public SQLXML getSQLXML(int col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public SQLXML getSQLXML(String col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public String getNString(int col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public String getNString(String col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public Reader getNCharacterStream(int col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public Reader getNCharacterStream(String col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public RowId getRowId(int col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public RowId getRowId(String col) throws SQLException {
+        throw new SQLException("NYI"); // TODO
+    }
+
+    public int getHoldability() throws SQLException {
+        return CLOSE_CURSORS_AT_COMMIT;
+    }
 
     public BigDecimal getBigDecimal(int col) throws SQLException {
         final String stringValue = getString(col);

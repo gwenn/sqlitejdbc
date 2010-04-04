@@ -51,11 +51,11 @@ build/$(sqlite)-%/sqlite3.o: dl/$(sqlite)-amal.zip
 
 build/org/%.class: src/org/%.java
 	@mkdir -p build
-	$(JAVAC) -target 1.5 -sourcepath src -d build $<
+	$(JAVAC) -sourcepath src -d build $<
 
 build/test/%.class: src/test/%.java
 	@mkdir -p build
-	$(JAVAC) -target 1.5 -classpath "build$(sep)$(libjunit)" \
+	$(JAVAC) -classpath "build$(sep)$(libjunit)" \
 	    -sourcepath src/test -d build $<
 
 dl/$(sqlite)-amal.zip:
