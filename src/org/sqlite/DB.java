@@ -120,7 +120,7 @@ abstract class DB implements Codes
         if (stmt.pointer != 0)
             finalize(stmt);
         stmt.pointer = prepare(stmt.sql);
-        stmts.put(new Long(stmt.pointer), stmt);
+        stmts.put(stmt.pointer, stmt);
     }
 
     final synchronized int finalize(Stmt stmt) throws SQLException {
@@ -129,7 +129,7 @@ abstract class DB implements Codes
         try {
             rc = finalize(stmt.pointer);
         } finally {
-            stmts.remove(new Long(stmt.pointer));
+            stmts.remove(stmt.pointer);
             stmt.pointer = 0;
         }
         return rc;
@@ -206,11 +206,11 @@ abstract class DB implements Codes
         if (v == null) {
             return bind_null(stmt, pos);
         } else if (v instanceof Integer) {
-            return bind_int(stmt, pos, ((Integer)v).intValue());
+            return bind_int(stmt, pos, (Integer) v);
         } else if (v instanceof Long) {
-            return bind_long(stmt, pos, ((Long)v).longValue());
+            return bind_long(stmt, pos, (Long) v);
         } else if (v instanceof Double) {
-            return bind_double(stmt, pos, ((Double)v).doubleValue());
+            return bind_double(stmt, pos, (Double) v);
         } else if (v instanceof String) {
             return bind_text(stmt, pos, (String)v);
         } else if (v instanceof byte[]) {

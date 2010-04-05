@@ -22,13 +22,10 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.NClob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -40,7 +37,7 @@ import java.util.Map;
 /**
  * Implements a JDBC ResultSet.
  */
-final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
+final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
 {
     private final Stmt stmt;
     private final DB db;
@@ -334,44 +331,20 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     public Timestamp getTimestamp(String c, Calendar ca) throws SQLException {
         return getTimestamp(findColumn(c), ca); }
 
-    public NClob getNClob(int col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public NClob getNClob(String col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public SQLXML getSQLXML(int col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public SQLXML getSQLXML(String col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
     public String getNString(int col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
+        return getString(col);
     }
 
     public String getNString(String col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
+        return getNString(findColumn(col));
     }
 
     public Reader getNCharacterStream(int col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
+        return getCharacterStream(col);
     }
 
     public Reader getNCharacterStream(String col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public RowId getRowId(int col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public RowId getRowId(String col) throws SQLException {
-        throw new SQLException("NYI"); // TODO
+        return getNCharacterStream(findColumn(col));
     }
 
     public int getHoldability() throws SQLException {
@@ -526,6 +499,13 @@ final class RS extends Unused implements ResultSet, ResultSetMetaData, Codes
     public boolean rowDeleted()  throws SQLException { return false; }
     public boolean rowInserted() throws SQLException { return false; }
     public boolean rowUpdated()  throws SQLException { return false; }
+
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        throw new SQLException("Not a wrapper");
+    }
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
+    }
 
     // 1970-01-01 00:00:00 is JD 2440587.5
     private static long fromJulianDay(double jd) {

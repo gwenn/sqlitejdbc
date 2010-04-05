@@ -60,7 +60,7 @@ public abstract class Function
 
     /** Registers the given function with the Connection using the
      *  provided name. */
-    public static final void create(Connection conn, String name, Function f)
+    public static void create(Connection conn, String name, Function f)
             throws SQLException {
         if (conn == null || !(conn instanceof Conn))
             throw new SQLException("connection must be to an SQLite db");
@@ -78,7 +78,7 @@ public abstract class Function
     }
 
     /** Removes the named function form the Connection. */
-    public static final void destroy(Connection conn, String name)
+    public static void destroy(Connection conn, String name)
             throws SQLException {
         if (conn == null || !(conn instanceof Conn))
             throw new SQLException("connection must be to an SQLite db");

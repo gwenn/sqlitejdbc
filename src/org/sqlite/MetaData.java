@@ -17,7 +17,6 @@
 package org.sqlite;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -40,7 +39,8 @@ class MetaData implements DatabaseMetaData
         getProcedureColumns = null,
         getAttributes = null,
         getVersionColumns = null,
-        getColumnPrivileges = null;
+        getColumnPrivileges = null,
+        getClientInfoProperties = null;
 
     /** Used by PrepStmt to save generating a new statement every call. */
     private PreparedStatement getGeneratedKeys = null;
@@ -71,6 +71,7 @@ class MetaData implements DatabaseMetaData
             if (getVersionColumns != null) getVersionColumns.close();
             if (getColumnPrivileges != null) getColumnPrivileges.close();
             if (getGeneratedKeys != null) getGeneratedKeys.close();
+            if (getClientInfoProperties != null) getClientInfoProperties.close();
 
             getTables = null;
             getTableTypes = null;
@@ -89,6 +90,7 @@ class MetaData implements DatabaseMetaData
             getVersionColumns = null;
             getColumnPrivileges = null;
             getGeneratedKeys = null;
+            getClientInfoProperties = null;
         } finally {
             conn = null;
         }
@@ -238,18 +240,25 @@ class MetaData implements DatabaseMetaData
     public boolean supportsStatementPooling() { return false; }
 
     public RowIdLifetime getRowIdLifetime() throws SQLException {
-        throw new SQLException("NYI"); // TODO
+        return RowIdLifetime.ROWID_UNSUPPORTED; // TODO
     }
 
     public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
-        throw new SQLException("NYI"); // TODO
+        return getSchemas();
     }
 
     public boolean supportsStoredFunctionsUsingCallSyntax() { return false; }
     public boolean autoCommitFailureClosesAllResultSets() { return false; }
 
     public ResultSet getClientInfoProperties() throws SQLException {
-        throw new SQLException("NYI"); // TODO
+        if (getClientInfoProperties == null) getClientInfoProperties = conn.prepareStatement("select "
+                + "null as NAME, "
+                + "0 as MAX_LEN, "
+                + "null as DEFAULT_VALUE, "
+                + "null as DESCRIPTION "
+                + "limit 0;");
+        getSchemas.clearParameters();
+        return getSchemas.executeQuery();
     }
 
     public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
@@ -262,7 +271,7 @@ class MetaData implements DatabaseMetaData
 
     public boolean supportsStoredProcedures() { return false; }
     public boolean supportsSubqueriesInComparisons() { return false; }
-    public boolean supportsSubqueriesInExists() { return true; } // TODO: check
+    public boolean supportsSubqueriesInExists() { return true; }
     public boolean supportsSubqueriesInIns() { return true; } // TODO: check
     public boolean supportsSubqueriesInQuantifieds() { return false; }
     public boolean supportsTableCorrelationNames() { return false; }

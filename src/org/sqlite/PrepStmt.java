@@ -16,6 +16,7 @@
 
 package org.sqlite;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,8 +25,8 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -33,12 +34,12 @@ import java.sql.Date;
 import java.sql.NClob;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
+import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLXML;
-import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -140,7 +141,6 @@ final class PrepStmt extends Stmt
     public int getScale(int pos) { return 0; }
     public int isNullable(int pos) { return parameterNullable; }
     public boolean isSigned(int pos) { return true; }
-    public Statement getStatement() { return this; }
 
 
     // PARAMETER FUNCTIONS //////////////////////////////////////////
@@ -226,6 +226,11 @@ final class PrepStmt extends Stmt
     public void setString(int pos, String value) throws SQLException {
         batch(pos, value);
     }
+
+    public void setNString(int parameterIndex, String value) throws SQLException {
+        setString(parameterIndex, value);
+    }
+
     public void setDate(int pos, Date x) throws SQLException {
         if (db.isJulianDayMode())
             batch(pos, x == null ? null : toJulianDay(x.getTime()));
@@ -257,9 +262,10 @@ final class PrepStmt extends Stmt
         batch(pos, value == null ? null : value.toString());
     }
 
-    public void setBinaryStream(int pos, InputStream x, int length) throws SQLException {
+
+    public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
         if (x == null) {
-            batch(pos, null);
+            batch(parameterIndex, null);
         } else {
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
             try {
@@ -267,12 +273,19 @@ final class PrepStmt extends Stmt
             } catch (IOException e) {
                 throw new SQLException(e.getMessage());
             }
-            batch(pos, output.toByteArray());
+            batch(parameterIndex, output.toByteArray());
         }
     }
-    public void setCharacterStream(int pos, Reader reader, int length) throws SQLException {
+    public void setBinaryStream(int parameterIndex, InputStream x, int length) throws SQLException {
+        setBinaryStream(parameterIndex, x); // TODO length ignored
+    }
+    public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException {
+        setBinaryStream(parameterIndex, x); // TODO length ignored
+    }
+
+    public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
         if (reader == null) {
-            batch(pos, null);
+            batch(parameterIndex, null);
         } else {
             final StringWriter sw = new StringWriter();
             try {
@@ -280,88 +293,75 @@ final class PrepStmt extends Stmt
             } catch (IOException e) {
                 throw new SQLException(e.getMessage());
             }
-            batch(pos, sw.toString());
+            batch(parameterIndex, sw.toString());
         }
     }
-    public void setAsciiStream(int pos, InputStream x, int length) throws SQLException {
+    public void setCharacterStream(int parameterIndex, Reader reader, int length) throws SQLException {
+        setCharacterStream(parameterIndex, reader); // TODO length ignored
+    }
+    public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException {
+        setCharacterStream(parameterIndex, reader); // TODO length ignored
+    }
+
+
+    public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
+        setCharacterStream(parameterIndex, value);
+    }
+    public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException {
+        setCharacterStream(parameterIndex, value, length);
+    }
+
+    public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
         try {
-            setCharacterStream(pos, x == null ? null : new InputStreamReader(x, "ASCII"), length);
+            setCharacterStream(parameterIndex, x == null ? null : new InputStreamReader(x, "ASCII"));
         } catch (UnsupportedEncodingException e) {
             throw new SQLException(e.getMessage());
         }
     }
-
-    public void setRowId(int parameterIndex, RowId x) throws SQLException {
-        throw new SQLException("NYI"); // TODO
+    public void setAsciiStream(int parameterIndex, InputStream x, int length) throws SQLException {
+        setAsciiStream(parameterIndex, x); // TODO length ignored
     }
-
-    public void setNString(int parameterIndex, String value) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public void setNClob(int parameterIndex, NClob value) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public void setClob(int parameterIndex, Reader reader, long length) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
     public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException {
-        throw new SQLException("NYI"); // TODO
+        setAsciiStream(parameterIndex, x); // TODO length ignored
     }
 
-    public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
+    public void setArray(int i, Array x)
+        throws SQLException { throw Util.unsupported(); }
 
-    public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
+    public void setBlob(int i, Blob x)
+        throws SQLException { throw Util.unsupported(); }
+    public void setBlob(int parameterIndex, InputStream inputStream)
+        throws SQLException { throw Util.unsupported(); }
+    public void setBlob(int parameterIndex, InputStream inputStream, long length)
+        throws SQLException { throw Util.unsupported(); }
 
-    public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
+    public void setClob(int i, Clob x)
+        throws SQLException { throw Util.unsupported(); }
+    public void setClob(int parameterIndex, Reader reader)
+        throws SQLException { throw Util.unsupported(); }
+    public void setClob(int parameterIndex, Reader reader, long length)
+        throws SQLException { throw Util.unsupported(); }
 
-    public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
+    public void setRef(int i, Ref x)
+        throws SQLException { throw Util.unsupported(); }
+    @SuppressWarnings("deprecation")
+    public void setUnicodeStream(int pos, InputStream x, int length)
+        throws SQLException { throw Util.unsupported(); }
+    public void setURL(int pos, URL x)
+        throws SQLException { throw Util.unsupported(); }
 
-    public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
+    public void setRowId(int parameterIndex, RowId x)
+        throws SQLException { throw Util.unsupported(); }
 
-    public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
+    public void setNClob(int parameterIndex, NClob value)
+        throws SQLException { throw Util.unsupported(); }
+    public void setNClob(int parameterIndex, Reader reader)
+        throws SQLException { throw Util.unsupported(); }
+    public void setNClob(int parameterIndex, Reader reader, long length)
+        throws SQLException { throw Util.unsupported(); }
 
-    public void setClob(int parameterIndex, Reader reader) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
-
-    public void setNClob(int parameterIndex, Reader reader) throws SQLException {
-        throw new SQLException("NYI"); // TODO
-    }
+    public void setSQLXML(int parameterIndex, SQLXML xmlObject)
+        throws SQLException { throw Util.unsupported(); }
 
     private static void copy(InputStream input, OutputStream output) throws IOException {
         byte[] buffer = new byte[1024 * 4];
@@ -400,7 +400,6 @@ final class PrepStmt extends Stmt
     // 1970-01-01 00:00:00 is JD 2440587.5
     static double toJulianDay(long ms) {
         double adj = (ms < 0) ? 0 : 0.5;
-        double d = (ms + adj) / 86400000.0 + 2440587.5;
-        return d;
+        return (ms + adj) / 86400000.0 + 2440587.5;
     }
 }
