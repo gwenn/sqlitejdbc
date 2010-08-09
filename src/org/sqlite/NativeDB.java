@@ -143,7 +143,7 @@ final class NativeDB extends DB
     native synchronized int    value_type  (Function f, int arg);
 
     native synchronized int create_function(String name, Function func);
-    native synchronized int destroy_function(String name);
+    native synchronized void destroy_function(String name);
     native synchronized void free_functions();
 
     // COMPOUND FUNCTIONS (for optimisation) /////////////////////////

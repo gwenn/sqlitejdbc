@@ -151,7 +151,7 @@ static void xFunc_error(sqlite3_context *context, JNIEnv *env)
 }
 
 /* used to call xFunc, xStep and xFinal */
-static xCall(
+static void xCall(
     sqlite3_context *context,
     int args,
     sqlite3_value** value,
@@ -704,7 +704,7 @@ JNIEXPORT jint JNICALL Java_org_sqlite_NativeDB_create_1function(
     return ret;
 }
 
-JNIEXPORT jint JNICALL Java_org_sqlite_NativeDB_destroy_1function(
+JNIEXPORT void JNICALL Java_org_sqlite_NativeDB_destroy_1function(
         JNIEnv *env, jobject this, jstring name)
 {
     const char* strname = (*env)->GetStringUTFChars(env, name, 0);

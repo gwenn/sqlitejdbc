@@ -180,7 +180,7 @@ abstract class DB implements Codes
     abstract int    value_type  (Function f, int arg) throws SQLException;
 
     abstract int create_function(String name, Function f) throws SQLException;
-    abstract int destroy_function(String name) throws SQLException;
+    abstract void destroy_function(String name) throws SQLException;
     abstract void free_functions() throws SQLException;
 
     /** Provides metadata for the columns of a statement. Returns:
