@@ -27,10 +27,10 @@ final class NativeDB extends DB
 
     private static Boolean loaded = null;
 
-    static boolean load() {
+    static boolean load(String[] errMsg) {
         if (loaded != null) return loaded == Boolean.TRUE;
 
-        String libpath = System.getProperty("org.sqlite.lib.path");
+        final String libpath = System.getProperty("org.sqlite.lib.path");
         String libname = System.getProperty("org.sqlite.lib.name");
         if (libname == null) libname = System.mapLibraryName("sqlitejdbc");
 
@@ -56,29 +56,52 @@ final class NativeDB extends DB
             osname = "solaris";
         if (osarch.startsWith("i") && osarch.endsWith("86"))
             osarch = "x86";
-        libname = osname + '-' + osarch + ".lib";
+        String bundled_libname = osname + '-' + osarch + ".lib";
 
         // try a bundled library
+        InputStream in = null;
+        OutputStream out = null;
         try {
             ClassLoader cl = NativeDB.class.getClassLoader();
-            InputStream in = cl.getResourceAsStream(libname);
-            if (in == null)
-                throw new Exception("libname: "+libname+" not found");
-            File tmplib = File.createTempFile("libsqlitejdbc-", ".lib");
-            tmplib.deleteOnExit();
-            OutputStream out = new FileOutputStream(tmplib);
-            byte[] buf = new byte[1024];
-            for (int len; (len = in.read(buf)) != -1;)
-                out.write(buf, 0, len);
-            in.close();
-            out.close();
+            in = cl.getResourceAsStream(bundled_libname);
+            if (in == null) {
+                File tmplib = File.createTempFile("libsqlitejdbc-", ".lib");
+                tmplib.deleteOnExit();
+                out = new FileOutputStream(tmplib);
+                byte[] buf = new byte[1024];
+                for (int len; (len = in.read(buf)) != -1;)
+                    out.write(buf, 0, len);
 
-            System.load(tmplib.getAbsolutePath());
+                System.load(tmplib.getAbsolutePath());
 
-            loaded = Boolean.TRUE;
-            return true;
-        } catch (Exception e) { }
+                loaded = Boolean.TRUE;
+                return true;
+            }
+        } catch (Exception e) {
+        } finally {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (IOException e) { }
+            }
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (IOException e) { }
+            }
+        }
 
+        if (null == libpath) {
+            errMsg[0] = String.format("No bundled library '%s' found in classpath/jar,%n" +
+                    "and no pre-installed library '%s' found in default library path.%n" +
+                    "Just bundle '%1$s' in the sqlite driver jar%nor set 'org.sqlite.lib.name' " +
+                    "(and/or 'org.sqlite.lib.path'/'java.library.path') system properties to customize pre-installed library lookup.",
+                    bundled_libname, libname);
+        } else {
+            errMsg[0] = String.format("No bundled library '%s' found in classpath/jar,%n" +
+                    "and no pre-installed library found in default custom library path '%s' ('%s').",
+                    bundled_libname, libpath, libname);
+        }
         loaded = Boolean.FALSE;
         return false;
     }

@@ -86,10 +86,11 @@ class Conn implements Connection
 
         readOnly = ro;
 
-        if (NativeDB.load())
+        final String[] errMsg = new String[1];
+        if (NativeDB.load(errMsg))
             db = new NativeDB();
         else
-            throw new SQLException("no SQLite library found");
+            throw new SQLException(errMsg[0]);
 
         this.url = url;
         db.open(this, filename);
