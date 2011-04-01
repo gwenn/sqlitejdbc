@@ -99,8 +99,8 @@ class MetaData implements DatabaseMetaData
     public Connection getConnection() { return conn; }
     public int getDatabaseMajorVersion() { return 3; }
     public int getDatabaseMinorVersion() { return 0; }
-    public int getDriverMajorVersion() { return 1; }
-    public int getDriverMinorVersion() { return 1; }
+    public int getDriverMajorVersion() { return 1; } // FIXME return what specified in JDBC class
+    public int getDriverMinorVersion() { return 1; } // FIXME return what specified in JDBC class
     public int getJDBCMajorVersion() { return 2; }
     public int getJDBCMinorVersion() { return 1; }
     public int getDefaultTransactionIsolation()
@@ -140,9 +140,9 @@ class MetaData implements DatabaseMetaData
     public String getCatalogTerm() { return "catalog"; }
     public String getSchemaTerm() { return "schema"; }
     public String getProcedureTerm() { return "not_implemented"; }
-    public String getSearchStringEscape() { return null; }
-    public String getIdentifierQuoteString() { return " "; }
-    public String getSQLKeywords() { return ""; }
+    public String getSearchStringEscape() { return null; } // TODO Validate
+    public String getIdentifierQuoteString() { return " "; } // TODO Validate
+    public String getSQLKeywords() { return ""; } // FIXME
     public String getNumericFunctions() { return "abs,max,min,round,random"; }
     public String getStringFunctions() { return "glob,length,like,lower,ltrim,replace,rtrim,soundex,substr,trim,upper"; }
     public String getSystemFunctions() { return "last_insert_rowid,load_extension,sqlite_version"; }
@@ -160,10 +160,10 @@ class MetaData implements DatabaseMetaData
     public boolean insertsAreDetected(int type) { return false; }
     public boolean isCatalogAtStart() { return true; }
     public boolean locatorsUpdateCopy() { return false; }
-    public boolean nullPlusNonNullIsNull() { return true; }
+    public boolean nullPlusNonNullIsNull() { return true; } // TODO Validate
     public boolean nullsAreSortedAtEnd() { return !nullsAreSortedAtStart(); }
-    public boolean nullsAreSortedAtStart() { return true; }
-    public boolean nullsAreSortedHigh() { return true; }
+    public boolean nullsAreSortedAtStart() { return true; } // TODO Validate
+    public boolean nullsAreSortedHigh() { return true; } // TODO Validate
     public boolean nullsAreSortedLow() { return !nullsAreSortedHigh(); }
     public boolean othersDeletesAreVisible(int type) { return false; }
     public boolean othersInsertsAreVisible(int type) { return false; }
@@ -173,13 +173,13 @@ class MetaData implements DatabaseMetaData
     public boolean ownUpdatesAreVisible(int type) { return false; }
     public boolean storesLowerCaseIdentifiers() { return false; }
     public boolean storesLowerCaseQuotedIdentifiers() { return false; }
-    public boolean storesMixedCaseIdentifiers() { return true; }
-    public boolean storesMixedCaseQuotedIdentifiers() { return false; }
+    public boolean storesMixedCaseIdentifiers() { return true; } // TODO Validate
+    public boolean storesMixedCaseQuotedIdentifiers() { return false; } // TODO Validate
     public boolean storesUpperCaseIdentifiers() { return false; }
     public boolean storesUpperCaseQuotedIdentifiers() { return false; }
     public boolean supportsAlterTableWithAddColumn() { return false; }
     public boolean supportsAlterTableWithDropColumn() { return false; }
-    public boolean supportsANSI92EntryLevelSQL() { return false; }
+    public boolean supportsANSI92EntryLevelSQL() { return false; } // TODO Validate
     public boolean supportsANSI92FullSQL() { return false; }
     public boolean supportsANSI92IntermediateSQL() { return false; }
     public boolean supportsBatchUpdates() { return true; }
@@ -205,21 +205,21 @@ class MetaData implements DatabaseMetaData
     public boolean supportsGetGeneratedKeys() { return false; } // TODO
     public boolean supportsGroupBy() { return true; }
     public boolean supportsGroupByBeyondSelect() { return false; }
-    public boolean supportsGroupByUnrelated() { return false; }
+    public boolean supportsGroupByUnrelated() { return false; } // TODO Validate
     public boolean supportsIntegrityEnhancementFacility() { return false; }
     public boolean supportsLikeEscapeClause() { return false; }
     public boolean supportsMixedCaseIdentifiers() { return true; }
     public boolean supportsMixedCaseQuotedIdentifiers() { return false; }
     public boolean supportsMultipleOpenResults() { return false; }
     public boolean supportsMultipleResultSets() { return false; }
-    public boolean supportsMultipleTransactions() { return true; }
+    public boolean supportsMultipleTransactions() { return true; } // TODO Validate
     public boolean supportsNamedParameters() { return true; }
     public boolean supportsNonNullableColumns() { return true; }
     public boolean supportsOpenCursorsAcrossCommit() { return false; }
     public boolean supportsOpenCursorsAcrossRollback() { return false; }
     public boolean supportsOpenStatementsAcrossCommit() { return false; }
     public boolean supportsOpenStatementsAcrossRollback() { return false; }
-    public boolean supportsOrderByUnrelated() { return false; }
+    public boolean supportsOrderByUnrelated() { return false; } // TODO Validate
     public boolean supportsOuterJoins() { return true; }
     public boolean supportsPositionedDelete() { return false; }
     public boolean supportsPositionedUpdate() { return false; }
@@ -272,9 +272,9 @@ class MetaData implements DatabaseMetaData
     public boolean supportsStoredProcedures() { return false; }
     public boolean supportsSubqueriesInComparisons() { return false; }
     public boolean supportsSubqueriesInExists() { return true; }
-    public boolean supportsSubqueriesInIns() { return true; } // TODO: check
+    public boolean supportsSubqueriesInIns() { return true; }
     public boolean supportsSubqueriesInQuantifieds() { return false; }
-    public boolean supportsTableCorrelationNames() { return false; }
+    public boolean supportsTableCorrelationNames() { return false; } // TODO Validate
     public boolean supportsTransactionIsolationLevel(int level)
         { return level == Connection.TRANSACTION_SERIALIZABLE || level == Connection.TRANSACTION_READ_UNCOMMITTED; }
     public boolean supportsTransactions() { return true; }
@@ -529,9 +529,9 @@ class MetaData implements DatabaseMetaData
                     }
                     sql.append("select ").
                         append(escape(pt)).append(" as pt, ").
-                        append(escape(rs.getString(4))).append(" as pc, ").
-                        append(escape(rs.getString(5))).append(" as fc, ").
-                        append(rs.getShort(2)).append(" as seq");
+                        append(escape(rs.getString(5))).append(" as pc, ").
+                        append(escape(rs.getString(4))).append(" as fc, ").
+                        append(rs.getShort(2) + 1).append(" as seq");
                 }
             } catch(SQLException e) {
                 i = 0;
