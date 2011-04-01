@@ -64,7 +64,7 @@ final class NativeDB extends DB
         try {
             ClassLoader cl = NativeDB.class.getClassLoader();
             in = cl.getResourceAsStream(bundled_libname);
-            if (in == null) {
+            if (in != null) {
                 File tmplib = File.createTempFile("libsqlitejdbc-", ".lib");
                 tmplib.deleteOnExit();
                 out = new FileOutputStream(tmplib);
