@@ -328,7 +328,7 @@ abstract class DB implements Codes
      * mode.
      */
     final void ensureAutoCommit() throws SQLException {
-        /*
+        /* FIXME
         if (!conn.getAutoCommit())
             return;
 

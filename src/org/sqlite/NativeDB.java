@@ -99,7 +99,7 @@ final class NativeDB extends DB
                     bundled_libname, libname);
         } else {
             errMsg[0] = String.format("No bundled library '%s' found in classpath/jar,%n" +
-                    "and no pre-installed library found in default custom library path '%s' ('%s').",
+                    "and no pre-installed library found in custom library path '%s' ('%s').",
                     bundled_libname, libpath, libname);
         }
         loaded = Boolean.FALSE;
