@@ -40,8 +40,7 @@ build/$(target)/$(LIBNAME): build/$(sqlite)-$(target)/sqlite3.o build/org/sqlite
 
 build/$(sqlite)-%/sqlite3.o: dl/$(sqlite)-amal.zip
 	@mkdir -p build/$(sqlite)-$*
-	unzip -qo dl/$(sqlite)-amal.zip -d build/$(sqlite)-$*
-	mv build/$(sqlite)-$*/sqlite-amalgamation-$(sqlite_version)/* build/$(sqlite)-$*/
+	unzip -qoj dl/$(sqlite)-amal.zip -d build/$(sqlite)-$*
 	perl -pi -e "s/sqlite3_api;/sqlite3_api = 0;/g" \
 	    build/$(sqlite)-$*/sqlite3ext.h
 	(cd build/$(sqlite)-$*; $(CC) -o sqlite3.o -c $(CFLAGS) \
