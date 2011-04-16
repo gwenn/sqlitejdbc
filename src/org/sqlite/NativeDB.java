@@ -59,36 +59,13 @@ final class NativeDB extends DB
         String bundled_libname = osname + '-' + osarch + ".lib";
 
         // try a bundled library
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            ClassLoader cl = NativeDB.class.getClassLoader();
-            in = cl.getResourceAsStream(bundled_libname);
-            if (in != null) {
-                File tmplib = File.createTempFile("libsqlitejdbc-", ".lib");
-                tmplib.deleteOnExit();
-                out = new FileOutputStream(tmplib);
-                byte[] buf = new byte[1024];
-                for (int len; (len = in.read(buf)) != -1;)
-                    out.write(buf, 0, len);
-                in.close();
-                out.close();
+        final File tmplib = unpackBundledLibrary(bundled_libname);
+        if (null != tmplib) {
+            try {
                 System.load(tmplib.getAbsolutePath());
-
                 loaded = Boolean.TRUE;
                 return true;
-            }
-        } catch (Exception e) {
-        } finally {
-            if (null != in) {
-                try {
-                    in.close();
-                } catch (IOException e) { }
-            }
-            if (null != out) {
-                try {
-                    out.close();
-                } catch (IOException e) { }
+            } catch (Exception e) {
             }
         }
 
@@ -105,6 +82,37 @@ final class NativeDB extends DB
         }
         loaded = Boolean.FALSE;
         return false;
+    }
+
+    private static File unpackBundledLibrary(String bundled_libname) {
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            final ClassLoader cl = NativeDB.class.getClassLoader();
+            in = cl.getResourceAsStream(bundled_libname);
+            if (in != null) {
+                final File tmplib = File.createTempFile("libsqlitejdbc-", ".lib");
+                tmplib.deleteOnExit();
+                out = new FileOutputStream(tmplib);
+                final byte[] buf = new byte[1024];
+                for (int len; (len = in.read(buf)) != -1;)
+                    out.write(buf, 0, len);
+                return tmplib;
+            }
+        } catch (Exception e) {
+        } finally {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (IOException e) { }
+            }
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (IOException e) { }
+            }
+        }
+        return null;
     }
 
 
