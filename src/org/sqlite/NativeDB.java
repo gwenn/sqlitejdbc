@@ -71,7 +71,8 @@ final class NativeDB extends DB
                 byte[] buf = new byte[1024];
                 for (int len; (len = in.read(buf)) != -1;)
                     out.write(buf, 0, len);
-
+                in.close();
+                out.close();
                 System.load(tmplib.getAbsolutePath());
 
                 loaded = Boolean.TRUE;
