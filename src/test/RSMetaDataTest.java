@@ -51,9 +51,9 @@ public class RSMetaDataTest
         assertTrue(meta.isAutoIncrement(1));
         assertFalse(meta.isAutoIncrement(2));
         assertFalse(meta.isAutoIncrement(3));
-        assertEquals(meta.columnNoNulls, meta.isNullable(1));
-        assertEquals(meta.columnNullable, meta.isNullable(2));
-        assertEquals(meta.columnNullable, meta.isNullable(3));
+        assertEquals(ResultSetMetaData.columnNoNulls, meta.isNullable(1));
+        assertEquals(ResultSetMetaData.columnNullable, meta.isNullable(2));
+        assertEquals(ResultSetMetaData.columnNullable, meta.isNullable(3));
     }
 
     @Test public void differentRS() throws SQLException {

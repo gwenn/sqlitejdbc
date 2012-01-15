@@ -49,7 +49,7 @@ final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
     String[] colsMeta = null; // same as cols, but used by Meta interface
     boolean[][] meta = null;
 
-    private int row = 1;   // number of current row, starts at 1
+    private int row = 0;   // number of current row, starts at 1
     private int lastCol;   // last column accessed, for wasNull(). -1 if none
 
     RS(Stmt stmt) {
@@ -99,7 +99,7 @@ final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
         colsMeta = null;
         meta = null;
         open = false;
-        row = 1;
+        row = 0;
         lastCol = -1;
 
         if (stmt == null)
@@ -143,7 +143,7 @@ final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
         lastCol = -1;
 
         // first row is loaded by execute(), so do not step() again
-        if (row == 1) { row++; return true; }
+        if (row == 0) { row++; return true; } else { row++; }
 
         // check if we are row limited by the statement or the ResultSet
         if (maxRows != 0 && row > maxRows) return false;
@@ -180,8 +180,8 @@ final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
 
     public boolean isAfterLast() throws SQLException { return !open; }
     public boolean isBeforeFirst() throws SQLException {
-        return open && row == 1; }
-    public boolean isFirst() throws SQLException { return row == 2; }
+        return open && row == 0; }
+    public boolean isFirst() throws SQLException { return row == 1; }
     public boolean isLast() throws SQLException { // FIXME
         throw new SQLException("function not yet implemented for SQLite"); }
 
@@ -347,6 +347,14 @@ final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
         return getNCharacterStream(findColumn(col));
     }
 
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        return null;  // FIXME
+    }
+
+    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
+        return null;  // FIXME
+    }
+
     public int getHoldability() throws SQLException {
         return CLOSE_CURSORS_AT_COMMIT;
     }
@@ -440,14 +448,14 @@ final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
     public ResultSetMetaData getMetaData() throws SQLException {
         return this; }
 
-    public String getCatalogName(int col) throws SQLException {
+    public String getCatalogName(int col) throws SQLException { // FIXME
         return db.column_table_name(stmt.pointer, checkCol(col)); }
-    public String getColumnClassName(int col) throws SQLException {
+    public String getColumnClassName(int col) throws SQLException { // FIXME
         checkCol(col); return "java.lang.Object"; }
     public int getColumnCount() throws SQLException {
         checkCol(1); return colsMeta.length;
     }
-    public int getColumnDisplaySize(int col) throws SQLException {
+    public int getColumnDisplaySize(int col) throws SQLException { // FIXME
         return Integer.MAX_VALUE; }
     public String getColumnLabel(int col) throws SQLException {
         return getColumnName(col); }
@@ -483,7 +491,7 @@ final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
         checkMeta();
         return meta[checkCol(col)][1] ? columnNoNulls: columnNullable;
     }
-    public boolean isAutoIncrement(int col) throws SQLException {
+    public boolean isAutoIncrement(int col) throws SQLException { // TODO Validate
         checkMeta(); return meta[checkCol(col)][2]; }
     public boolean isCaseSensitive(int col) throws SQLException { return true; }
     public boolean isCurrency(int col) throws SQLException { return false; }
@@ -496,7 +504,7 @@ final class RS extends UnusedRS implements ResultSet, ResultSetMetaData, Codes
 
     public int getConcurrency() throws SQLException { return CONCUR_READ_ONLY; }
 
-    public boolean rowDeleted()  throws SQLException { return false; }
+    public boolean rowDeleted()  throws SQLException { return false; } // FIXME
     public boolean rowInserted() throws SQLException { return false; }
     public boolean rowUpdated()  throws SQLException { return false; }
 

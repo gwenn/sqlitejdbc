@@ -18,6 +18,7 @@ package org.sqlite;
 
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class JDBC implements Driver
 {
@@ -35,6 +36,10 @@ public class JDBC implements Driver
     public int getMinorVersion() { return 1; }
 
     public boolean jdbcCompliant() { return false; }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw Util.unsupported();
+    }
 
     public boolean acceptsURL(String url) {
         return url != null && url.toLowerCase().startsWith(PREFIX);

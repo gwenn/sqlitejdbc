@@ -106,6 +106,7 @@ class Stmt implements Statement, Codes
         return getResultSet();
     }
 
+    // TODO See Xerial improvement
     public int executeUpdate(String sql) throws SQLException {
         close();
         this.sql = sql;
@@ -201,7 +202,7 @@ class Stmt implements Statement, Codes
         return changes;
     }
 
-    public void setCursorName(String name) {}
+    public void setCursorName(String name) {} // FIXME unsupported
 
     public SQLWarning getWarnings() throws SQLException { return null; }
     public void clearWarnings() throws SQLException {}
@@ -226,7 +227,7 @@ class Stmt implements Statement, Codes
     }
 
     public int getMaxFieldSize() throws SQLException { return 0; }
-    public void setMaxFieldSize(int max) throws SQLException {
+    public void setMaxFieldSize(int max) throws SQLException { // TODO checkOpen
         if (max < 0) throw new SQLException(
             "max field size "+max+" cannot be negative");
     }
@@ -251,7 +252,7 @@ class Stmt implements Statement, Codes
     public boolean getMoreResults() throws SQLException {
         return getMoreResults(0);
     }
-    public boolean getMoreResults(int c) throws SQLException {
+    public boolean getMoreResults(int c) throws SQLException { // FIXME
         checkOpen();
         close(); // as we never have another result, clean up pointer
         return false;
@@ -274,10 +275,20 @@ class Stmt implements Statement, Codes
         return false;  // TODO
     }
 
+    public void closeOnCompletion() throws SQLException {
+        checkOpen();
+        // FIXME
+    }
+
+    public boolean isCloseOnCompletion() throws SQLException {
+        checkOpen();
+        return false;  // FIXME
+    }
+
     public int getResultSetType() throws SQLException {
         return ResultSet.TYPE_FORWARD_ONLY; }
 
-    public void setEscapeProcessing(boolean enable) {}
+    public void setEscapeProcessing(boolean enable) {} // TODO checkOpen
 
     public <T> T unwrap(Class<T> iface) throws SQLException {
         throw new SQLException("Not a wrapper");

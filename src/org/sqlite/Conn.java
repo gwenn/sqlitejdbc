@@ -35,6 +35,7 @@ import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 class Conn implements Connection
 {
@@ -330,6 +331,45 @@ class Conn implements Connection
 
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
         throw Util.unsupported(); // TODO
+    }
+
+    public void setSchema(String schema) throws SQLException {
+        checkOpen();
+    }
+
+    public String getSchema() throws SQLException {
+        return null;
+    }
+
+    public void abort(Executor executor) throws SQLException {
+        if (isClosed()) {
+            return;
+        }
+        if (executor == null) {
+            throw new SQLException("Null executor");
+        }
+        // TODO
+    }
+
+    public void setNetworkTimeout(Executor executor, final int milliseconds) throws SQLException {
+        checkOpen();
+        if (executor == null) {
+            throw new SQLException("Null executor");
+        }
+        if (milliseconds < 0) throw new SQLException("network timeout must be >= 0");
+        executor.execute(new Runnable() {
+            public void run() {
+                try {
+                    setTimeout(milliseconds); // FIXME Network timeout and query timeout are the same!
+                } catch (SQLException e) {
+                    // FIXME
+                }
+            }
+        });
+    }
+
+    public int getNetworkTimeout() throws SQLException {
+        return getTimeout();
     }
 
     public <T> T unwrap(Class<T> iface) throws SQLException {

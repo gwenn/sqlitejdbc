@@ -40,7 +40,8 @@ class MetaData implements DatabaseMetaData
         getAttributes = null,
         getVersionColumns = null,
         getColumnPrivileges = null,
-        getClientInfoProperties = null;
+        getClientInfoProperties = null,
+        getPseudoColumns = null;
 
     /** Used by PrepStmt to save generating a new statement every call. */
     private PreparedStatement getGeneratedKeys = null;
@@ -72,6 +73,7 @@ class MetaData implements DatabaseMetaData
             if (getColumnPrivileges != null) getColumnPrivileges.close();
             if (getGeneratedKeys != null) getGeneratedKeys.close();
             if (getClientInfoProperties != null) getClientInfoProperties.close();
+            if (getPseudoColumns != null) getPseudoColumns.close();
 
             getTables = null;
             getTableTypes = null;
@@ -91,6 +93,7 @@ class MetaData implements DatabaseMetaData
             getColumnPrivileges = null;
             getGeneratedKeys = null;
             getClientInfoProperties = null;
+            getPseudoColumns = null;
         } finally {
             conn = null;
         }
@@ -267,6 +270,28 @@ class MetaData implements DatabaseMetaData
 
     public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern, String columnNamePattern) throws SQLException {
         throw new SQLException("NYI"); // TODO
+    }
+
+    public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+        if (getPseudoColumns == null) getPseudoColumns = conn.prepareStatement(
+                "select "
+                        + "null as TABLE_CAT, "
+                        + "null as TABLE_SCHEM, "
+                        + "null as TABLE_NAME, "
+                        + "null as COLUMN_NAME, "
+                        + "null as DATA_TYPE, "
+                        + "null as COLUMN_SIZE, "
+                        + "null as DECIMAL_DIGITS, "
+                        + "null as NUM_PREC_RADIX, "
+                        + "null as COLUMN_USAGE, "
+                        + "null as REMARKS, "
+                        + "null as CHAR_OCTET_LENGTH, "
+                        + "null as IS_NULLABLE limit 0;");
+        return getPseudoColumns.executeQuery();
+    }
+
+    public boolean generatedKeyAlwaysReturned() throws SQLException {
+        return false;
     }
 
     public boolean supportsStoredProcedures() { return false; }
