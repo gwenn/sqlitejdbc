@@ -41,12 +41,14 @@ build/$(target)/$(LIBNAME): build/$(sqlite)-$(target)/sqlite3.o build/org/sqlite
 build/$(sqlite)-%/sqlite3.o: dl/$(sqlite)-amal.zip
 	@mkdir -p build/$(sqlite)-$*
 	unzip -qoj dl/$(sqlite)-amal.zip -d build/$(sqlite)-$*
-	perl -pi -e "s/sqlite3_api;/sqlite3_api = 0;/g" \
-	    build/$(sqlite)-$*/sqlite3ext.h
+#	perl -pi -e "s/sqlite3_api;/sqlite3_api = 0;/g" \
+#	    build/$(sqlite)-$*/sqlite3ext.h
 	(cd build/$(sqlite)-$*; $(CC) -o sqlite3.o -c $(CFLAGS) \
 	    -DSQLITE_ENABLE_COLUMN_METADATA \
-	    -DSQLITE_ENABLE_FTS3 \
+	    -DSQLITE_ENABLE_FTS4 \
+	    -DSQLITE_ENABLE_STAT3 \
 	    -DSQLITE_THREADSAFE=1 \
+	    -DSQLITE_DEFAULT_FOREIGN_KEYS=1 \
 	    sqlite3.c)
 
 build/org/%.class: src/org/%.java
